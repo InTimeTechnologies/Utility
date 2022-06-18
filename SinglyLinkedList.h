@@ -9,7 +9,7 @@ class SinglyLinkedNode {
 
 		SinglyLinkedNode(T data);
 		SinglyLinkedNode(const SinglyLinkedNode& singlyLinkedNode);
-
+		
 		void operator = (const SinglyLinkedNode& singlyLinkedNode);
 
 		~SinglyLinkedNode();
