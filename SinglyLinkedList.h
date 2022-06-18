@@ -54,6 +54,8 @@ class SinglyLinkedList {
 
 		SinglyLinkedNode<E>* add(E data);						// O(1)
 		SinglyLinkedNode<E>* addAt(unsigned int i, E data);		// O(n)
+		SinglyLinkedNode<E>* addToHead(E data);					// O(1)
+		SinglyLinkedNode<E>* addToTail(E data);					// O(n)
 
 		SinglyLinkedNode<E>* getNodeAt(unsigned int i);			// O(n)
 		SinglyLinkedNode<E>* getHeadNode();						// O(1)
@@ -101,19 +103,55 @@ SinglyLinkedNode<E>* SinglyLinkedList<E>::add(E data) {
 
 template <class E>
 SinglyLinkedNode<E>* SinglyLinkedList<E>::addAt(unsigned int i, E data) {
-	if (size == 0)
-		return add(data);
-	SinglyLinkedNode<E>* singlyLinkedNode = new SinglyLinkedNode<E>(data);
 	if (i > size)
 		return nullptr;
-	unsigned int count = 0;
-	SinglyLinkedNode<E>* currentNode = head;
-	while (count != i - 1) {
-		currentNode = currentNode->nextNode;
-		count++;
+	SinglyLinkedNode<E>* singlyLinkedNode = new SinglyLinkedNode<E>(data);
+	if (size == 0) {
+		head = singlyLinkedNode;
+		tail = singlyLinkedNode;
+		size++;
+		return singlyLinkedNode;
 	}
+	if (i == 0) {
+		singlyLinkedNode->nextNode = head;
+		head = singlyLinkedNode;
+		size++;
+		return singlyLinkedNode;
+	}
+	SinglyLinkedNode<E>* currentNode = head;
+	for (unsigned int j = 1; j < i; j++)
+		currentNode = currentNode->nextNode;
 	singlyLinkedNode->nextNode = currentNode->nextNode;
 	currentNode->nextNode = singlyLinkedNode;
+	size++;
+	return singlyLinkedNode;
+}
+
+template <class E>
+SinglyLinkedNode<E>* SinglyLinkedList<E>::addToHead(E data) {
+	SinglyLinkedNode<E>* singlyLinkedNode = new SinglyLinkedNode<E>(data);
+	if (size == 0) {
+		head = singlyLinkedNode;
+		tail = singlyLinkedNode;
+		size++;
+		return singlyLinkedNode;
+	}
+	singlyLinkedNode->nextNode = head;
+	head = singlyLinkedNode;
+	size++;
+	return singlyLinkedNode;
+}
+
+template <class E>
+SinglyLinkedNode<E>* SinglyLinkedList<E>::addToTail(E data) {
+	SinglyLinkedNode<E>* singlyLinkedNode = new SinglyLinkedNode<E>(data);
+	if (size == 0) {
+		head = singlyLinkedNode;
+		tail = singlyLinkedNode;
+		size++;
+		return singlyLinkedNode;
+	}
+	tail->nextNode = singlyLinkedNode;
 	size++;
 	return singlyLinkedNode;
 }
@@ -231,13 +269,13 @@ template <class E>
 E SinglyLinkedList<E>::removeHead() {
 	if (size == 0)
 		return 0;
-	else if (size == 1) {
+	if (size == 1) {
 		E data = head->data;
 		delete(head);
 		size--;
 		return data;
 	}
-	else if (size == 2) {
+	if (size == 2) {
 		E data = head->data;
 		SinglyLinkedNode<E>* newHead = head->nextNode;
 		delete(head);
