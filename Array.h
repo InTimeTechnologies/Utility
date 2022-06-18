@@ -2,10 +2,10 @@
 
 template <class T>
 class Array {
-	public:
+	private:
 		T* genericArray;
 		unsigned int size;
-
+	public:
 		Array();
 		Array(unsigned int size);
 		Array(unsigned int size, T* data);
@@ -15,7 +15,7 @@ class Array {
 
 		void set(T element, unsigned int i);
 		T get(unsigned int i);
-
+		T* getArray();
 		unsigned int getSize();
 
 		~Array();
@@ -49,12 +49,17 @@ template <class T>
 void Array<T>::set(T element, unsigned int i) {
 	if (i >= size)
 		return;
-	genericArray[i] = T;
+	genericArray[i] = element;
 }
 
 template <class T>
 T Array<T>::get(unsigned int i) {
 	return genericArray[i];
+}
+
+template <class T>
+T* Array<T>::getArray() {
+	return genericArray;
 }
 
 template <class T>
