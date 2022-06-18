@@ -10,7 +10,7 @@ class ArrayList {
 		ArrayList();
 		ArrayList(unsigned int capacity);
 		ArrayList(T* data, unsigned int size, unsigned int capacity);
-		ArrayList(const ArrayList& arrayList);
+		ArrayList(const ArrayList& otherArrayList);
 
 		void operator = (const ArrayList& otherArrayList);
 
@@ -18,6 +18,7 @@ class ArrayList {
 		void add(T element);
 		T get(unsigned int i);
 		void resizeCapacity(unsigned int capacity);
+		T* getArray();
 
 		unsigned int getSize();
 		unsigned int getCapacity();
@@ -46,27 +47,26 @@ ArrayList<T>::ArrayList(T* data, unsigned int size, unsigned int capacity) {
 	genericArray = new T[capacity];
 	this->size = size;
 	this->capacity = capacity;
-
 	for (unsigned int i = 0; i < size; i++)
 		genericArray[i] = data[i];
 }
 
 template <class T>
-ArrayList<T>::ArrayList(const ArrayList& arrayList) {
-	genericArray = new T[arrayList.capacity];
-	for (unsigned int i = 0; i < arrayList.size; i++)
-		genericArray[i] = arrayList.genericArray[i];
-	size = arrayList.size;
-	capacity = arrayList.capacity;
+ArrayList<T>::ArrayList(const ArrayList& otherArrayList) {
+	genericArray = new T[otherArrayList.capacity];
+	size = otherArrayList.size;
+	capacity = otherArrayList.capacity;
+	for (unsigned int i = 0; i < otherArrayList.size; i++)
+		genericArray[i] = otherArrayList.genericArray[i];
 }
 
 template <class T>
 void ArrayList<T>::operator = (const ArrayList<T>& otherArrayList) {
 	genericArray = new T[capacity];
-	for (unsigned int i = 0; i < size; i++)
-		genericArray[i] = otherArrayList.genericArray[i];
 	size = otherArrayList.size;
 	capacity = otherArrayList.size;
+	for (unsigned int i = 0; i < size; i++)
+		genericArray[i] = otherArrayList.genericArray[i];
 }
 
 template <class T>
@@ -91,6 +91,11 @@ void ArrayList<T>::add(T element) {
 	if (size == capacity)
 		resizeCapacity(capacity * 2);
 	set(element, size++);
+}
+
+template <class T>
+T* ArrayList<T>::getArray() {
+	return genericArray;
 }
 
 template <class T>
