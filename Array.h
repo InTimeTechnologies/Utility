@@ -10,13 +10,13 @@ class Array {
 		Array(unsigned int size);
 		Array(unsigned int size, T* data);
 		Array(const Array& genericArray);
+		
+		void operator = (const Array& otherArray);
 
 		void set(T element, unsigned int i);
 		T get(unsigned int i);
 
 		unsigned int getSize();
-
-		void operator = (const Array& otherArray);
 
 		~Array();
 };
