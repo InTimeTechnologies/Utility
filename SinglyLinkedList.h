@@ -48,9 +48,9 @@ class SinglyLinkedList {
 		SinglyLinkedNode<E>* tail;
 
 		SinglyLinkedList();
-		// SinglyLinkedList(const SinglyLinkedList& singlyLinkedList);
+		SinglyLinkedList(const SinglyLinkedList& singlyLinkedList);
 
-		// void operator = (const SinglyLinkedList<E> singlyLinkedList);
+		void operator = (const SinglyLinkedList<E> singlyLinkedList);
 
 		SinglyLinkedNode<E>* add(E data);						// O(1)
 		SinglyLinkedNode<E>* addAt(unsigned int i, E data);		// O(n)
@@ -87,8 +87,34 @@ SinglyLinkedList<E>::SinglyLinkedList() {
 }
 
 template <class E>
+SinglyLinkedList<E>::SinglyLinkedList(const SinglyLinkedList<E>& singlyLinkedList) {
+	head = nullptr;
+	tail = nullptr;
+	size = 0;
+
+	SinglyLinkedNode<E>* currentNode = singlyLinkedList.head;
+	while (currentNode != nullptr) {
+		addToTail(currentNode->data);
+		currentNode = currentNode->nextNode;
+	}
+}
+
+template <class E>
+void SinglyLinkedList<E>::operator = (const SinglyLinkedList<E> singlyLinkedList) {
+	head = nullptr;
+	tail = nullptr;
+	size = 0;
+
+	SinglyLinkedNode<E>* currentNode = singlyLinkedList.head;
+	while (currentNode != nullptr) {
+		addToTail(currentNode->data);
+		currentNode = currentNode->nextNode;
+	}
+}
+
+template <class E>
 SinglyLinkedNode<E>* SinglyLinkedList<E>::add(E data) {
-	addToTail();
+	return addToTail(data);
 }
 
 template <class E>
