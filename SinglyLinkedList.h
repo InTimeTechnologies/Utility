@@ -52,29 +52,29 @@ class SinglyLinkedList {
 
 		void operator = (const SinglyLinkedList<E> singlyLinkedList);
 
-		SinglyLinkedNode<E>* add(E data);						// O(1)
-		SinglyLinkedNode<E>* addAt(unsigned int i, E data);		// O(n)
-		SinglyLinkedNode<E>* addToHead(E data);					// O(1)
-		SinglyLinkedNode<E>* addToTail(E data);					// O(n)
+		SinglyLinkedNode<E>* add(E data);                       // O(1)
+		SinglyLinkedNode<E>* addAt(unsigned int i, E data);     // O(n)
+		SinglyLinkedNode<E>* addToHead(E data);                 // O(1)
+		SinglyLinkedNode<E>* addToTail(E data);                 // O(n)
 
-		SinglyLinkedNode<E>* getNodeAt(unsigned int i);			// O(n)
-		SinglyLinkedNode<E>* getHeadNode();						// O(1)
-		SinglyLinkedNode<E>* getTailNode();						// O(1)
-		bool contains(SinglyLinkedNode<E>* singlyLinkedNode);	// O(n)
+		SinglyLinkedNode<E>* getNodeAt(unsigned int i);         // O(n)
+		SinglyLinkedNode<E>* getHeadNode();                     // O(1)
+		SinglyLinkedNode<E>* getTailNode();                     // O(1)
+		bool contains(SinglyLinkedNode<E>* singlyLinkedNode);   // O(n)
 
-		E getDataAt(unsigned int i);							// O(n)
-		E getHeadData();										// O(1)
-		E getTailData();										// O(1)
-		bool contains(E data);									// O(n)
+		E getDataAt(unsigned int i);                            // O(n)
+		E getHeadData();                                        // O(1)
+		E getTailData();                                        // O(1)
+		bool contains(E data);                                  // O(n)
 
-		E remove(E data);										// O(n)
-		E removeAt(unsigned int i);								// O(n)
-		E removeHead();											// O(1)
-		E removeTail();											// O(size)
+		E remove(E data);                                       // O(n)
+		E removeAt(unsigned int i);                             // O(n)
+		E removeHead();                                         // O(1)
+		E removeTail();                                         // O(size)
 
-		void clear();											// O(size)
-		bool isEmpty();											// O(1)
-		unsigned int getSize();									// O(1)
+		void clear();                                           // O(size)
+		bool isEmpty();                                         // O(1)
+		unsigned int getSize();                                 // O(1)
 
 		~SinglyLinkedList();
 };
