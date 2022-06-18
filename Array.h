@@ -9,9 +9,9 @@ class Array {
 		Array();
 		Array(unsigned int size);
 		Array(unsigned int size, T* data);
-		Array(const Array& genericArray);
+		Array(const Array& otherArrayObject);
 		
-		void operator = (const Array& otherArray);
+		void operator = (const Array& otherArrayObject);
 
 		void set(T element, unsigned int i);
 		T get(unsigned int i);
@@ -40,9 +40,14 @@ Array<T>::Array(unsigned int size, T* data) : Array<T>(size) {
 }
 
 template <class T>
-Array<T>::Array(const Array& genericArray) {
-	genericArray = new T[genericArray.size];
-	size = genericArray.size;
+Array<T>::Array(const Array<T>& otherArrayObject) : Array<T>(otherArrayObject.size, otherArrayObject.genericArray) {
+	
+}
+
+template <class T>
+void Array<T>::operator = (const Array<T>& otherArrayObject) {
+	this->genericArray = new T[otherArrayObject.size];
+	size = otherArrayObject.size;
 }
 
 template <class T>
@@ -65,12 +70,6 @@ T* Array<T>::getArray() {
 template <class T>
 unsigned int Array<T>::getSize() {
 	return size;
-}
-
-template <class T>
-void Array<T>::operator = (const Array<T>& otherArray) {
-	genericArray = new Array[otherArray.size];
-	size = otherArray.size;
 }
 
 template <class T>
