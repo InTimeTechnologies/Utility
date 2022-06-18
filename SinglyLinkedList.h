@@ -88,17 +88,7 @@ SinglyLinkedList<E>::SinglyLinkedList() {
 
 template <class E>
 SinglyLinkedNode<E>* SinglyLinkedList<E>::add(E data) {
-	SinglyLinkedNode<E>* singlyLinkedNode = new SinglyLinkedNode<E>(data);
-	if (size == 0) {
-		head = singlyLinkedNode;
-		tail = singlyLinkedNode;
-		size++;
-		return singlyLinkedNode;
-	}
-	tail->nextNode = new SinglyLinkedNode<E>(data);
-	tail = tail->nextNode;
-	size++;
-	return singlyLinkedNode;
+	addToTail();
 }
 
 template <class E>
@@ -151,7 +141,8 @@ SinglyLinkedNode<E>* SinglyLinkedList<E>::addToTail(E data) {
 		size++;
 		return singlyLinkedNode;
 	}
-	tail->nextNode = singlyLinkedNode;
+	tail->nextNode = new SinglyLinkedNode<E>(data);
+	tail = tail->nextNode;
 	size++;
 	return singlyLinkedNode;
 }
