@@ -11,7 +11,7 @@ class ArrayList {
 		ArrayList();
 		ArrayList(unsigned int capacity);
 		ArrayList(T* data, unsigned int size, unsigned int capacity);
-		ArrayList(const ArrayList& otherArrayList);
+		ArrayList(const ArrayList& otherArrayList);         // O(n)
 
 		void operator = (const ArrayList& otherArrayList);  // O(n)
 
