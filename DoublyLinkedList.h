@@ -5,17 +5,17 @@
 // DoubleLinkedNode
 template <class T>
 class DoublyLinkedNode {
-public:
-	T data;
-	DoublyLinkedNode<T>* nextNode;
-	DoublyLinkedNode<T>* previousNode;
+	public:
+		T data;
+		DoublyLinkedNode<T>* nextNode;
+		DoublyLinkedNode<T>* previousNode;
 
-	DoublyLinkedNode(T data);
-	DoublyLinkedNode(const DoublyLinkedNode<T>& otherDoublyLinkedNode);
+		DoublyLinkedNode(T data);
+		DoublyLinkedNode(const DoublyLinkedNode<T>& otherDoublyLinkedNode);
 
-	void operator = (const DoublyLinkedNode<T>& otherDoublyLinkedNode);
+		void operator = (const DoublyLinkedNode<T>& otherDoublyLinkedNode);
 
-	~DoublyLinkedNode();
+		~DoublyLinkedNode();
 };
 
 template <class T>
