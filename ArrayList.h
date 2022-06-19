@@ -2,11 +2,12 @@
 
 template <class T>
 class ArrayList {
-	public:
+	private:
 		T* genericArray;
 		unsigned int size;
 		unsigned int capacity;
-		
+
+	public:
 		ArrayList();
 		ArrayList(unsigned int capacity);
 		ArrayList(T* data, unsigned int size, unsigned int capacity);
@@ -16,6 +17,7 @@ class ArrayList {
 
 		void set(T element, unsigned int i);
 		void add(T element);
+		void insert(T element, unsigned int i);
 		T get(unsigned int i);
 		void resizeCapacity(unsigned int capacity);
 		T* getArray();
@@ -91,6 +93,23 @@ void ArrayList<T>::add(T element) {
 	if (size == capacity)
 		resizeCapacity(capacity * 2);
 	set(element, size++);
+}
+
+template <class T>
+void ArrayList<T>::insert(T element, unsigned int i) {
+	if (i > size)
+		return;
+	if (size == capacity)
+		resizeCapacity(capacity * 2);
+
+	size++;
+	T currentElement = element;
+	for (unsigned int j = i; j < size; j++) {
+		T tempElement = genericArray[j];
+		genericArray[j] = currentElement;
+		currentElement = tempElement;
+	}
+
 }
 
 template <class T>
