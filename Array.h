@@ -9,14 +9,14 @@ class Array {
 		Array();
 		Array(unsigned int size);
 		Array(unsigned int size, T* data);
-		Array(const Array& otherArrayObject);
+		Array(const Array& otherArrayObject);               // O(n)
 		
-		void operator = (const Array& otherArrayObject);
+		void operator = (const Array& otherArrayObject);    // O(n)
 
-		void set(T element, unsigned int i);
-		T get(unsigned int i);
-		T* getArray();
-		unsigned int getSize();
+		void set(T element, unsigned int i);                // O(1)
+		T get(unsigned int i);                              // O(1)
+		T* getArray();                                      // O(1)
+		unsigned int getSize();                             // O(1)
 
 		~Array();
 };
