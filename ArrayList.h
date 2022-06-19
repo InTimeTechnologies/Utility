@@ -13,17 +13,17 @@ class ArrayList {
 		ArrayList(T* data, unsigned int size, unsigned int capacity);
 		ArrayList(const ArrayList& otherArrayList);
 
-		void operator = (const ArrayList& otherArrayList);
+		void operator = (const ArrayList& otherArrayList);  // O(n)
 
-		void set(T element, unsigned int i);            // O(1)
-		void add(T element);                            // O(1) or O(n)
-		void insert(T element, unsigned int i);         // O(1) or O(n)
-		T get(unsigned int i);                          // O(1)
-		void resizeCapacity(unsigned int capacity);     // O(n)
-		T* getArray();                                  // O(1)
+		void set(T element, unsigned int i);                // O(1)
+		void add(T element);                                // O(1) or O(n)
+		void insert(T element, unsigned int i);             // O(1) or O(n)
+		T get(unsigned int i);                              // O(1)
+		void resizeCapacity(unsigned int capacity);         // O(n)
+		T* getArray();                                      // O(1)
 
-		unsigned int getSize();                         // O(1)
-		unsigned int getCapacity();                     // O(1)
+		unsigned int getSize();                             // O(1)
+		unsigned int getCapacity();                         // O(1)
 
 		~ArrayList();
 };
