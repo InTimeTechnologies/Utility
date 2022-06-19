@@ -57,30 +57,30 @@ class DoublyLinkedList {
 
 		void operator = (const DoublyLinkedList<E>& otherDoublyLinkedList);
 
-		DoublyLinkedNode<E>* addToHead(E data);						// O(1)
-		DoublyLinkedNode<E>* addAt(unsigned int i, E data);			// O(n)
-		DoublyLinkedNode<E>* addToTail(E data);						// O(1)
+		DoublyLinkedNode<E>* addToHead(E data);                     // O(1)
+		DoublyLinkedNode<E>* addAt(unsigned int i, E data);         // O(n)
+		DoublyLinkedNode<E>* addToTail(E data);                     // O(1)
 
-		DoublyLinkedNode<E>* insertNextOf(DoublyLinkedNode<E>* doublyLinkedNode, E data);		// O(1)
-		DoublyLinkedNode<E>* insertPreviousOf(DoublyLinkedNode<E>* doublyLinkedNode, E data);	// O(1)
+		DoublyLinkedNode<E>* insertNextOf(DoublyLinkedNode<E>* doublyLinkedNode, E data);       // O(1)
+		DoublyLinkedNode<E>* insertPreviousOf(DoublyLinkedNode<E>* doublyLinkedNode, E data);   // O(1)
 
-		DoublyLinkedNode<E>* getNodeAt(unsigned int i);				// O(n)
-		DoublyLinkedNode<E>* getHeadNode();							// O(1)
-		DoublyLinkedNode<E>* getTailNode();							// O(1)
-		bool contains(DoublyLinkedNode<E>* doublyLinkedNode);		// O(1)
+		DoublyLinkedNode<E>* getNodeAt(unsigned int i);             // O(n)
+		DoublyLinkedNode<E>* getHeadNode();                         // O(1)
+		DoublyLinkedNode<E>* getTailNode();                         // O(1)
+		bool contains(DoublyLinkedNode<E>* doublyLinkedNode);       // O(1)
 
-		E getDataAt(unsigned int i);								// O(n)
-		E getHeadData();											// O(1)
-		E getTailData();											// O(1)
-		bool contains(E data);										// O(n)
+		E getDataAt(unsigned int i);                                // O(n)
+		E getHeadData();                                            // O(1)
+		E getTailData();                                            // O(1)
+		bool contains(E data);                                      // O(n)
 
-		E removeAt(unsigned int i);									// O(n)
-		E removeHead();												// O(1)
-		E removeTail();												// O(1)
-		E removeNode(DoublyLinkedNode<E>* doublyLinkedNode);		// O(1)
+		E removeAt(unsigned int i);                                 // O(n)
+		E removeHead();                                             // O(1)
+		E removeTail();                                             // O(1)
+		E removeNode(DoublyLinkedNode<E>* doublyLinkedNode);        // O(1)
 
-		void clear();												// O(n)
-		unsigned int getSize();										// O(1)
+		void clear();                                               // O(n)
+		unsigned int getSize();                                     // O(1)
 
 		~DoublyLinkedList();
 };
