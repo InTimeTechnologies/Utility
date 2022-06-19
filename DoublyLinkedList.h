@@ -53,9 +53,9 @@ class DoublyLinkedList {
 		DoublyLinkedNode<E>* tail;
 
 		DoublyLinkedList();
-		DoublyLinkedList(const DoublyLinkedList<E>& otherDoublyLinkedList);
+		DoublyLinkedList(const DoublyLinkedList<E>& otherDoublyLinkedList);     // O(n)
 
-		void operator = (const DoublyLinkedList<E>& otherDoublyLinkedList);
+		void operator = (const DoublyLinkedList<E>& otherDoublyLinkedList);     // O(n)
 
 		DoublyLinkedNode<E>* addToHead(E data);                     // O(1)
 		DoublyLinkedNode<E>* addAt(unsigned int i, E data);         // O(n)
