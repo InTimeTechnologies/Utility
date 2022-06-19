@@ -48,9 +48,9 @@ class SinglyLinkedList {
 		SinglyLinkedNode<E>* tail;
 
 		SinglyLinkedList();
-		SinglyLinkedList(const SinglyLinkedList& singlyLinkedList);
+		SinglyLinkedList(const SinglyLinkedList& singlyLinkedList);     // O(n)
 
-		void operator = (const SinglyLinkedList<E> singlyLinkedList);
+		void operator = (const SinglyLinkedList<E> singlyLinkedList);   // O(n)
 
 		SinglyLinkedNode<E>* add(E data);                       // O(1)
 		SinglyLinkedNode<E>* addAt(unsigned int i, E data);     // O(n)
