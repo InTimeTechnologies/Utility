@@ -120,7 +120,7 @@ template <class E>
 DoublyLinkedNode<E>* DoublyLinkedList<E>::addToHead(E data) {
 	DoublyLinkedNode<E>* newNode = new DoublyLinkedNode<E>(data);
 
-	if (isEmpty()) {
+	if (size == 0) {
 		head = newNode;
 		tail = newNode;
 		size++;
@@ -163,7 +163,7 @@ template <class E>
 DoublyLinkedNode<E>* DoublyLinkedList<E>::addToTail(E data) {
 	DoublyLinkedNode<E>* newNode = new DoublyLinkedNode<E>(data);
 
-	if (isEmpty()) {
+	if (size = 0) {
 		head = newNode;
 		tail = newNode;
 		size++;
@@ -207,7 +207,7 @@ DoublyLinkedNode<E>* DoublyLinkedList<E>::insertNextOf(DoublyLinkedNode<E>* doub
 
 template <class E>
 DoublyLinkedNode<E>* DoublyLinkedList<E>::getNodeAt(unsigned int i) {
-	if (isEmpty())
+	if (size == 0)
 		return 0;
 	if (i > (size - 1))
 		return 0;
@@ -242,7 +242,7 @@ bool DoublyLinkedList<E>::contains(DoublyLinkedNode<E>* doublyLinkedNode) {
 
 template <class E>
 E DoublyLinkedList<E>::getDataAt(unsigned int i) {
-	if (isEmpty())
+	if (size == 0)
 		return 0;
 	if (i > (size - 1))
 		return 0;
@@ -309,7 +309,7 @@ E DoublyLinkedList<E>::removeAt(unsigned int i) {
 
 template <class E>
 E DoublyLinkedList<E>::removeHead() {
-	if (isEmpty())
+	if (size == 0)
 		return 0;
 
 	DoublyLinkedNode<E>* nodeToRemove = head;
@@ -388,9 +388,7 @@ void DoublyLinkedList<E>::clear() {
 	if (size == 0)
 		return;
 
-	for (unsigned int i = 0; !isEmpty(); i++)
+	while (size > 0)
 		removeHead();
-
-	return list;
 }
 
