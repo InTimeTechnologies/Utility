@@ -11,10 +11,6 @@ class DoublyLinkedNode {
 		DoublyLinkedNode<T>* previousNode;
 
 		DoublyLinkedNode(T data);
-		DoublyLinkedNode(const DoublyLinkedNode<T>& otherDoublyLinkedNode);
-
-		void operator = (const DoublyLinkedNode<T>& otherDoublyLinkedNode);
-
 		~DoublyLinkedNode();
 };
 
@@ -23,18 +19,6 @@ DoublyLinkedNode<T>::DoublyLinkedNode(T data) {
 	this->data = data;
 	nextNode = nullptr;
 	previousNode = nullptr;
-}
-
-template <class T>
-DoublyLinkedNode<T>::DoublyLinkedNode(const DoublyLinkedNode<T>& otherDoublyLinkedNode) {
-	data = otherDoublyLinkedNode.data;
-	nextNode = nullptr;
-}
-
-template <class T>
-void DoublyLinkedNode<T>::operator = (const DoublyLinkedNode<T>& otherDoublyLinkedNode) {
-	data = otherDoublyLinkedNode.data;
-	nextNode = nullptr;
 }
 
 template <class T>
@@ -53,9 +37,6 @@ class DoublyLinkedList {
 		DoublyLinkedNode<E>* tail;
 
 		DoublyLinkedList();
-		DoublyLinkedList(const DoublyLinkedList<E>& otherDoublyLinkedList);     // O(n)
-
-		void operator = (const DoublyLinkedList<E>& otherDoublyLinkedList);     // O(n)
 
 		DoublyLinkedNode<E>* addToHead(E data);                     // O(1)
 		DoublyLinkedNode<E>* addAt(unsigned int i, E data);         // O(n)
@@ -79,7 +60,8 @@ class DoublyLinkedList {
 		E removeTail();                                             // O(1)
 		E removeNode(DoublyLinkedNode<E>* doublyLinkedNode);        // O(1)
 
-		void clear();                                               // O(n)
+		std::vector<E> clear();                                     // O(n)
+		bool isEmpty();                                             // O(1)
 		unsigned int getSize();                                     // O(1)
 
 		~DoublyLinkedList();
@@ -93,24 +75,6 @@ DoublyLinkedList<E>::DoublyLinkedList() {
 }
 
 template <class E>
-DoublyLinkedList<E>::DoublyLinkedList(const DoublyLinkedList<E>& otherDoublyLinkedList) {
-	DoublyLinkedNode<E>* currentDoublyLinkedNode = otherDoublyLinkedList.head;
-	while (currentDoublyLinkedNode != nullptr) {
-		addToTail(otherDoublyLinkedList.data);
-		currentDoublyLinkedNode = currentDoublyLinkedNode->nextNode;
-	}
-}
-
-template <class E>
-void DoublyLinkedList<E>::operator = (const DoublyLinkedList<E>& otherDoublyLinkedList) {
-	DoublyLinkedNode<E>* currentDoublyLinkedNode = otherDoublyLinkedList.head;
-	while (currentDoublyLinkedNode != nullptr) {
-		addToTail(otherDoublyLinkedList.data);
-		currentDoublyLinkedNode = currentDoublyLinkedNode->nextNode;
-	}
-}
-
-template <class E>
 DoublyLinkedList<E>::~DoublyLinkedList() {
 	while (head != nullptr)
 		removeHead();
@@ -120,7 +84,7 @@ template <class E>
 DoublyLinkedNode<E>* DoublyLinkedList<E>::addToHead(E data) {
 	DoublyLinkedNode<E>* newNode = new DoublyLinkedNode<E>(data);
 
-	if (size == 0) {
+	if (isEmpty()) {
 		head = newNode;
 		tail = newNode;
 		size++;
@@ -137,9 +101,11 @@ DoublyLinkedNode<E>* DoublyLinkedList<E>::addToHead(E data) {
 template <class E>
 DoublyLinkedNode<E>* DoublyLinkedList<E>::addAt(unsigned int i, E data) {
 	if (i > size)
-		return 0;
+		throw "DoublyLinkedNode<E>* DoublyLinkedList<E>::addAt(unsigned int i, E data): i > size + 1";
+
 	if (i == 0)
 		return addToHead(data);
+
 	if (i == size)
 		return addToTail(data);
 
@@ -163,7 +129,7 @@ template <class E>
 DoublyLinkedNode<E>* DoublyLinkedList<E>::addToTail(E data) {
 	DoublyLinkedNode<E>* newNode = new DoublyLinkedNode<E>(data);
 
-	if (size = 0) {
+	if (isEmpty()) {
 		head = newNode;
 		tail = newNode;
 		size++;
@@ -207,10 +173,11 @@ DoublyLinkedNode<E>* DoublyLinkedList<E>::insertNextOf(DoublyLinkedNode<E>* doub
 
 template <class E>
 DoublyLinkedNode<E>* DoublyLinkedList<E>::getNodeAt(unsigned int i) {
-	if (size == 0)
-		return 0;
+	if (isEmpty())
+		throw "DoublyLinkedNode<E>* DoublyLinkedList<E>::getNodeAt(unsigned int i): size == 0";
+
 	if (i > (size - 1))
-		return 0;
+		throw "DoublyLinkedNode<E>* DoublyLinkedList<E>::getNodeAt(unsigned int i): i > size + 1";
 
 	DoublyLinkedNode<E>* currentNode = head;
 	for (unsigned int currentIndex = 0; currentIndex < i; currentIndex++)
@@ -242,10 +209,11 @@ bool DoublyLinkedList<E>::contains(DoublyLinkedNode<E>* doublyLinkedNode) {
 
 template <class E>
 E DoublyLinkedList<E>::getDataAt(unsigned int i) {
-	if (size == 0)
-		return 0;
+	if (isEmpty())
+		throw "DoublyLinkedNode<E>* DoublyLinkedList<E>::getNodeAt(unsigned int i): size == 0";
+
 	if (i > (size - 1))
-		return 0;
+		throw "DoublyLinkedNode<E>* DoublyLinkedList<E>::getNodeAt(unsigned int i): i > size + 1";
 
 	DoublyLinkedNode<E>* currentNode = head;
 	DoublyLinkedNode<E>* previousNode = nullptr;
@@ -283,11 +251,15 @@ bool DoublyLinkedList<E>::contains(E data) {
 
 template <class E>
 E DoublyLinkedList<E>::removeAt(unsigned int i) {
-	if (size == 0 || i >= size - 1)
-		return 0;
+	if (isEmpty())
+		throw "E DoublyLinkedList<E>::removeAt(unsigned int i): size == 0";
+
+	if (i > (size - 1))
+		throw "DoublyLinkedNode<E>* DoublyLinkedList<E>::getNodeAt(unsigned int i): i > size - 1";
 
 	if (i == 0)
 		return removeHead();
+
 	if (i == (size - 1))
 		return removeTail();
 
@@ -309,8 +281,8 @@ E DoublyLinkedList<E>::removeAt(unsigned int i) {
 
 template <class E>
 E DoublyLinkedList<E>::removeHead() {
-	if (size == 0)
-		return 0;
+	if (isEmpty())
+		throw "E DoublyLinkedList<E>::removeHead(): size == 0";
 
 	DoublyLinkedNode<E>* nodeToRemove = head;
 	E data = nodeToRemove->data;
@@ -334,8 +306,8 @@ E DoublyLinkedList<E>::removeHead() {
 
 template <class E>
 E DoublyLinkedList<E>::removeTail() {
-	if (size == 0)
-		return 0;
+	if (isEmpty())
+		throw "E DoublyLinkedList<E>::removeHead(): size == 0";
 
 	DoublyLinkedNode<E>* nodeToRemove = tail;
 	E data = nodeToRemove->data;
@@ -358,8 +330,8 @@ E DoublyLinkedList<E>::removeTail() {
 
 template <class E>
 E DoublyLinkedList<E>::removeNode(DoublyLinkedNode<E>* doublyLinkedNode) {
-	if (size == 0)
-		return 0;
+	if (isEmpty())
+		throw "E DoublyLinkedList<E>::removeNode(DoublyLinkedNode<E>* doublyLinkedNode): size == 0";
 
 	E data = doublyLinkedNode->data;
 	// If true, node is head node
@@ -383,12 +355,22 @@ unsigned int DoublyLinkedList<E>::getSize() {
 	return size;
 }
 
+// To-Do: This function can be more efficient. Wipe everything out instead of using removeHead
 template <class E>
-void DoublyLinkedList<E>::clear() {
-	if (size == 0)
-		return;
+std::vector<E> DoublyLinkedList<E>::clear() {
+	if (isEmpty())
+		throw "E* DoublyLinkedList<E>::clear(): size == 0";
 
-	while (size > 0)
-		removeHead();
+	std::vector<E> list = std::vector<E>(size);
+	for (unsigned int i = 0; !isEmpty(); i++)
+		list[i] = removeHead();
+
+	return list;
 }
 
+template <class E>
+bool DoublyLinkedList<E>::isEmpty() {
+	if (head == nullptr || tail == nullptr || size == 0)
+		return true;
+	return false;
+}
