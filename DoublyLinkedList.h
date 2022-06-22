@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 // DoubleLinkedNode
 template <class T>
 class DoublyLinkedNode {
@@ -79,7 +77,7 @@ class DoublyLinkedList {
 		E removeTail();                                             // O(1)
 		E removeNode(DoublyLinkedNode<E>* doublyLinkedNode);        // O(1)
 
-		std::vector<E> clear();                                     // O(n)
+		void clear();                                               // O(n)
 		bool isEmpty();                                             // O(1)
 		unsigned int getSize();                                     // O(1)
 
@@ -392,15 +390,12 @@ unsigned int DoublyLinkedList<E>::getSize() {
 
 // To-Do: This function can be more efficient. Wipe everything out instead of using removeHead
 template <class E>
-std::vector<E> DoublyLinkedList<E>::clear() {
+void DoublyLinkedList<E>::clear() {
 	if (isEmpty())
 		throw 10;
 
-	std::vector<E> list = std::vector<E>(size);
 	for (unsigned int i = 0; !isEmpty(); i++)
-		list[i] = removeHead();
-
-	return list;
+		removeHead();
 }
 
 template <class E>
