@@ -76,3 +76,4 @@ template <class T>
 Array<T>::~Array() {
 	delete[] genericArray;
 }
+
