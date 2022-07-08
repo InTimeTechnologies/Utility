@@ -48,9 +48,9 @@ public:
 	SinglyLinkedNode<E>* tail;
 
 	SinglyLinkedList();
-	SinglyLinkedList(const SinglyLinkedList& singlyLinkedList);     // O(n)
+	SinglyLinkedList(const SinglyLinkedList<E>& singlyLinkedList);   // O(n)
 
-	void operator = (const SinglyLinkedList<E> singlyLinkedList);   // O(n)
+	void operator = (const SinglyLinkedList<E>& singlyLinkedList);   // O(n)
 
 	SinglyLinkedNode<E>* add(E data);                       // O(1)
 	SinglyLinkedNode<E>* addAt(unsigned int i, E data);     // O(n)
@@ -100,7 +100,7 @@ SinglyLinkedList<E>::SinglyLinkedList(const SinglyLinkedList<E>& singlyLinkedLis
 }
 
 template <class E>
-void SinglyLinkedList<E>::operator = (const SinglyLinkedList<E> singlyLinkedList) {
+void SinglyLinkedList<E>::operator = (const SinglyLinkedList<E>& singlyLinkedList) {
 	head = nullptr;
 	tail = nullptr;
 	size = 0;
