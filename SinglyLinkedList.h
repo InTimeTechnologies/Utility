@@ -3,16 +3,16 @@
 // SinglyLinkedNode
 template <class T>
 class SinglyLinkedNode {
-	public:
-		T data;
-		SinglyLinkedNode<T>* nextNode;
+public:
+	T data;
+	SinglyLinkedNode<T>* nextNode;
 
-		SinglyLinkedNode(T data);
-		SinglyLinkedNode(const SinglyLinkedNode& singlyLinkedNode);
-		
-		void operator = (const SinglyLinkedNode& singlyLinkedNode);
+	SinglyLinkedNode(T data);
+	SinglyLinkedNode(const SinglyLinkedNode& singlyLinkedNode);
 
-		~SinglyLinkedNode();
+	void operator = (const SinglyLinkedNode& singlyLinkedNode);
+
+	~SinglyLinkedNode();
 };
 
 template <class T>
@@ -41,42 +41,42 @@ SinglyLinkedNode<T>::~SinglyLinkedNode() {
 // SinglyLinkedList
 template <class E>
 class SinglyLinkedList {
-	private:
-		unsigned int size;
-	public:
-		SinglyLinkedNode<E>* head;
-		SinglyLinkedNode<E>* tail;
+private:
+	unsigned int size;
+public:
+	SinglyLinkedNode<E>* head;
+	SinglyLinkedNode<E>* tail;
 
-		SinglyLinkedList();
-		SinglyLinkedList(const SinglyLinkedList& singlyLinkedList);     // O(n)
+	SinglyLinkedList();
+	SinglyLinkedList(const SinglyLinkedList& singlyLinkedList);     // O(n)
 
-		void operator = (const SinglyLinkedList<E> singlyLinkedList);   // O(n)
+	void operator = (const SinglyLinkedList<E> singlyLinkedList);   // O(n)
 
-		SinglyLinkedNode<E>* add(E data);                       // O(1)
-		SinglyLinkedNode<E>* addAt(unsigned int i, E data);     // O(n)
-		SinglyLinkedNode<E>* addToHead(E data);                 // O(1)
-		SinglyLinkedNode<E>* addToTail(E data);                 // O(n)
+	SinglyLinkedNode<E>* add(E data);                       // O(1)
+	SinglyLinkedNode<E>* addAt(unsigned int i, E data);     // O(n)
+	SinglyLinkedNode<E>* addToHead(E data);                 // O(1)
+	SinglyLinkedNode<E>* addToTail(E data);                 // O(n)
 
-		SinglyLinkedNode<E>* getNodeAt(unsigned int i);         // O(n)
-		SinglyLinkedNode<E>* getHeadNode();                     // O(1)
-		SinglyLinkedNode<E>* getTailNode();                     // O(1)
-		bool contains(SinglyLinkedNode<E>* singlyLinkedNode);   // O(n)
+	SinglyLinkedNode<E>* getNodeAt(unsigned int i);         // O(n)
+	SinglyLinkedNode<E>* getHeadNode();                     // O(1)
+	SinglyLinkedNode<E>* getTailNode();                     // O(1)
+	bool contains(SinglyLinkedNode<E>* singlyLinkedNode);   // O(n)
 
-		E getDataAt(unsigned int i);                            // O(n)
-		E getHeadData();                                        // O(1)
-		E getTailData();                                        // O(1)
-		bool contains(E data);                                  // O(n)
+	E getDataAt(unsigned int i);                            // O(n)
+	E getHeadData();                                        // O(1)
+	E getTailData();                                        // O(1)
+	bool contains(E data);                                  // O(n)
 
-		E remove(E data);                                       // O(n)
-		E removeAt(unsigned int i);                             // O(n)
-		E removeHead();                                         // O(1)
-		E removeTail();                                         // O(size)
+	E remove(E data);                                       // O(n)
+	E removeAt(unsigned int i);                             // O(n)
+	E removeHead();                                         // O(1)
+	E removeTail();                                         // O(size)
 
-		void clear();                                           // O(size)
-		bool isEmpty();                                         // O(1)
-		unsigned int getSize();                                 // O(1)
+	void clear();                                           // O(size)
+	bool isEmpty();                                         // O(1)
+	unsigned int getSize();                                 // O(1)
 
-		~SinglyLinkedList();
+	~SinglyLinkedList();
 };
 
 template <class E>
@@ -167,7 +167,7 @@ SinglyLinkedNode<E>* SinglyLinkedList<E>::addToTail(E data) {
 		size++;
 		return singlyLinkedNode;
 	}
-	tail->nextNode = new SinglyLinkedNode<E>(data);
+	tail->nextNode = singlyLinkedNode;
 	tail = tail->nextNode;
 	size++;
 	return singlyLinkedNode;
@@ -206,21 +206,21 @@ template <class E>
 E SinglyLinkedList<E>::getDataAt(unsigned int i) {
 	SinglyLinkedNode<E>* singlyLinkedNode = getNodeAt(i);
 	if (singlyLinkedNode == nullptr)
-		return 0;
+		throw 0;
 	return singlyLinkedNode->data;
 }
 
 template <class E>
 E SinglyLinkedList<E>::getHeadData() {
 	if (head == nullptr)
-		return 0;
+		throw 1;
 	return head->data;
 }
 
 template <class E>
 E SinglyLinkedList<E>::getTailData() {
 	if (tail == nullptr)
-		return 0;
+		throw 2;
 	return tail->data;
 }
 
@@ -240,7 +240,7 @@ bool SinglyLinkedList<E>::contains(E data) {
 template <class E>
 E SinglyLinkedList<E>::remove(E data) {
 	if (size == 0)
-		return 0;
+		throw 3;
 	if (head->data == data)
 		return removeHead();
 	if (size > 1) {
@@ -259,13 +259,13 @@ E SinglyLinkedList<E>::remove(E data) {
 			currentNode = currentNode->nextNode;
 		}
 	}
-	return 0;
+	throw 4;
 }
 
 template <class E>
 E SinglyLinkedList<E>::removeAt(unsigned int i) {
 	if (size == 0 || i >= size)
-		return 0;
+		throw 5;
 	if (i == 0)
 		return removeHead();
 	if (i == (size - 1))
@@ -285,11 +285,13 @@ E SinglyLinkedList<E>::removeAt(unsigned int i) {
 template <class E>
 E SinglyLinkedList<E>::removeHead() {
 	if (size == 0)
-		return 0;
+		throw 6;
 	if (size == 1) {
 		E data = head->data;
 		delete(head);
 		size--;
+		head = nullptr;
+		tail = nullptr;
 		return data;
 	}
 	if (size == 2) {
@@ -299,6 +301,7 @@ E SinglyLinkedList<E>::removeHead() {
 		head = newHead;
 		tail = newHead;
 		size--;
+		return data;
 	}
 	SinglyLinkedNode<E>* newHead = head->nextNode;
 	E data = head->data;
@@ -311,7 +314,7 @@ E SinglyLinkedList<E>::removeHead() {
 template <class E>
 E SinglyLinkedList<E>::removeTail() {
 	if (size == 0)
-		return 0;
+		throw 7;
 	if (size == 1)
 		return removeHead();
 	if (size == 2) {
