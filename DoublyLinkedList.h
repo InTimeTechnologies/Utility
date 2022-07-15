@@ -3,17 +3,17 @@
 // DoubleLinkedNode
 template <class T>
 class DoublyLinkedNode {
-	public:
-		T data;
-		DoublyLinkedNode<T>* nextNode;
-		DoublyLinkedNode<T>* previousNode;
+public:
+	T data;
+	DoublyLinkedNode<T>* nextNode;
+	DoublyLinkedNode<T>* previousNode;
 
-		DoublyLinkedNode(T data);
-		DoublyLinkedNode(const DoublyLinkedNode<T>& otherDoublyLinkedNode);
+	DoublyLinkedNode(T data);
+	DoublyLinkedNode(const DoublyLinkedNode<T>& otherDoublyLinkedNode);
 
-		void operator = (const DoublyLinkedNode<T>& otherDoublyLinkedNode);
+	void operator = (const DoublyLinkedNode<T>& otherDoublyLinkedNode);
 
-		~DoublyLinkedNode();
+	~DoublyLinkedNode();
 };
 
 template <class T>
@@ -44,44 +44,44 @@ DoublyLinkedNode<T>::~DoublyLinkedNode() {
 // DoublyLinkedList
 template <class E>
 class DoublyLinkedList {
-	private:
-		unsigned int size;
-	public:
-		DoublyLinkedNode<E>* head;
-		DoublyLinkedNode<E>* tail;
+private:
+	unsigned int size;
+public:
+	DoublyLinkedNode<E>* head;
+	DoublyLinkedNode<E>* tail;
 
-		DoublyLinkedList();
-		DoublyLinkedList(const DoublyLinkedList<E>& otherDoublyLinkedList);
+	DoublyLinkedList();
+	DoublyLinkedList(const DoublyLinkedList<E>& otherDoublyLinkedList);
 
-		void operator = (const DoublyLinkedList<E>& otherDoublyLinkedList);
+	void operator = (const DoublyLinkedList<E>& otherDoublyLinkedList);
 
-		DoublyLinkedNode<E>* addToHead(E data);                     // O(1)
-		DoublyLinkedNode<E>* addAt(unsigned int i, E data);         // O(n)
-		DoublyLinkedNode<E>* addToTail(E data);                     // O(1)
+	DoublyLinkedNode<E>* addToHead(E data);                     // O(1)
+	DoublyLinkedNode<E>* addAt(unsigned int i, E data);         // O(n)
+	DoublyLinkedNode<E>* addToTail(E data);                     // O(1)
 
-		DoublyLinkedNode<E>* insertNextOf(DoublyLinkedNode<E>* doublyLinkedNode, E data);       // O(1)
-		DoublyLinkedNode<E>* insertPreviousOf(DoublyLinkedNode<E>* doublyLinkedNode, E data);   // O(1)
+	DoublyLinkedNode<E>* insertNextOf(DoublyLinkedNode<E>* doublyLinkedNode, E data);       // O(1)
+	DoublyLinkedNode<E>* insertPreviousOf(DoublyLinkedNode<E>* doublyLinkedNode, E data);   // O(1)
 
-		DoublyLinkedNode<E>* getNodeAt(unsigned int i);             // O(n)
-		DoublyLinkedNode<E>* getHeadNode();                         // O(1)
-		DoublyLinkedNode<E>* getTailNode();                         // O(1)
-		bool contains(DoublyLinkedNode<E>* doublyLinkedNode);       // O(1)
+	DoublyLinkedNode<E>* getNodeAt(unsigned int i);             // O(n)
+	DoublyLinkedNode<E>* getHeadNode();                         // O(1)
+	DoublyLinkedNode<E>* getTailNode();                         // O(1)
+	bool contains(DoublyLinkedNode<E>* doublyLinkedNode);       // O(1)
 
-		E getDataAt(unsigned int i);                                // O(n)
-		E getHeadData();                                            // O(1)
-		E getTailData();                                            // O(1)
-		bool contains(E data);                                      // O(n)
+	E getDataAt(unsigned int i);                                // O(n)
+	E getHeadData();                                            // O(1)
+	E getTailData();                                            // O(1)
+	bool contains(E data);                                      // O(n)
 
-		E removeAt(unsigned int i);                                 // O(n)
-		E removeHead();                                             // O(1)
-		E removeTail();                                             // O(1)
-		E removeNode(DoublyLinkedNode<E>* doublyLinkedNode);        // O(1)
+	E removeAt(unsigned int i);                                 // O(n)
+	E removeHead();                                             // O(1)
+	E removeTail();                                             // O(1)
+	E removeNode(DoublyLinkedNode<E>* doublyLinkedNode);        // O(1)
 
-		void clear();                                               // O(n)
-		bool isEmpty();                                             // O(1)
-		unsigned int getSize();                                     // O(1)
+	void clear();                                               // O(n)
+	bool isEmpty();                                             // O(1)
+	unsigned int getSize();                                     // O(1)
 
-		~DoublyLinkedList();
+	~DoublyLinkedList();
 };
 
 template <class E>
@@ -105,7 +105,7 @@ void DoublyLinkedList<E>::operator = (const DoublyLinkedList<E>& otherDoublyLink
 	head = nullptr;
 	tail = nullptr;
 	size = 0;
-	
+
 	DoublyLinkedNode<E>* currentNode = otherDoublyLinkedList.head;
 	while (currentNode != nullptr) {
 		addToTail(currentNode->data);
@@ -170,14 +170,17 @@ DoublyLinkedNode<E>* DoublyLinkedList<E>::addToTail(E data) {
 	}
 
 	newNode->previousNode = tail;
+	tail->nextNode = newNode;
 	tail = newNode;
-	newNode->previousNode->nextNode = newNode;
 	size++;
 	return newNode;
 }
 
 template <class E>
 DoublyLinkedNode<E>* DoublyLinkedList<E>::insertPreviousOf(DoublyLinkedNode<E>* doublyLinkedNode, E data) {
+	if (head == doublyLinkedNode)
+		return addToHead(data);
+
 	DoublyLinkedNode<E>* newNode = new DoublyLinkedNode<E>(data);
 
 	newNode->nextNode = doublyLinkedNode;
@@ -192,6 +195,9 @@ DoublyLinkedNode<E>* DoublyLinkedList<E>::insertPreviousOf(DoublyLinkedNode<E>* 
 
 template <class E>
 DoublyLinkedNode<E>* DoublyLinkedList<E>::insertNextOf(DoublyLinkedNode<E>* doublyLinkedNode, E data) {
+	if (tail == doublyLinkedNode)
+		return addToTail(data);
+
 	DoublyLinkedNode<E>* newNode = new DoublyLinkedNode<E>(data);
 
 	newNode->nextNode = doublyLinkedNode->nextNode;
