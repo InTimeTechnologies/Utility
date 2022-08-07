@@ -18,6 +18,8 @@ class ArrayList {
 		void set(T element, unsigned int i);                // O(1)
 		void add(T element);                                // O(1) or O(n)
 		void insert(T element, unsigned int i);             // O(1) or O(n)
+		bool removeAt(unsigned int i);                      // O(1)
+		bool remove(T element);                             // O(n)
 		T get(unsigned int i);                              // O(1)
 		void resizeCapacity(unsigned int capacity);         // O(n)
 		T* getArray();                                      // O(1)
@@ -109,7 +111,35 @@ void ArrayList<T>::insert(T element, unsigned int i) {
 		genericArray[j] = currentElement;
 		currentElement = tempElement;
 	}
+}
 
+template <class T>
+bool ArrayList<T>::removeAt(unsigned int i) {
+	if (i >= size)
+		return false;
+	while (i < size - 1) {
+		genericArray[i] = genericArray[i + 1];
+		i++;
+	}
+	size--;
+	return true;
+}
+
+template <class T>
+bool ArrayList<T>::remove(T element) {
+	if (size == 0)
+		return false;
+	for (unsigned int i = 0; i < size; i++) {
+		if (genericArray[i] == element) {
+			while (i < size - 1) {
+				genericArray[i] = genericArray[i + 1];
+				i++;
+			}
+			size--;
+			return true;
+		}
+	}
+	return false;
 }
 
 template <class T>
@@ -134,7 +164,7 @@ void ArrayList<T>::resizeCapacity(unsigned int capacity) {
 		capacity = 1;
 
 	genericArray = new T[capacity];
-	for (unsigned int i = 0; i < capacity; i++)
+	for (unsigned int i = 0; i < this->capacity; i++)
 		genericArray[i] = oldGenericArray[i];
 	if (oldSize > capacity)
 		size = capacity;
