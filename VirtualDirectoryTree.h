@@ -8,7 +8,6 @@ using namespace std;
 
 template <class T> class VirtualFile;
 template <class U> class VirtualDirectory;
-template <class V> class VirtualDirectoryTree;
 
 // VirtualFile
 template <class T>
