@@ -14,6 +14,13 @@ template <class V> class VirtualDirectoryTree;
 // VirtualFile
 template <class T>
 class VirtualFile {
+	// Static
+	public:
+		static VirtualFile<T>* create();
+		static VirtualFile<T>* create(const std::string& name);
+		static VirtualFile<T>* create(const std::string& name, T data);
+		static VirtualFile<T>* create(const std::string& name, T data, VirtualFile<T>* parentDirectory);
+	// Object
 	private:
 		VirtualFile();
 		VirtualFile(const std::string& name);
@@ -21,21 +28,39 @@ class VirtualFile {
 		VirtualFile(const std::string& name, T data, VirtualFile<T>* parentDirectory);
 		VirtualFile(const VirtualFile& otherVirtualFile);
 		void operator = (const VirtualFile& otherVirtualFile);
+		~VirtualFile();
 	public:
 		std::string name;
 		T data;
 		VirtualDirectory<T>* parentDirectory;
 
-		static VirtualFile<T>* create();
-		static VirtualFile<T>* create(const std::string& name);
-		static VirtualFile<T>* create(const std::string& name, T data);
-		static VirtualFile<T>* create(const std::string& name, T data, VirtualFile<T>* parentDirectory);
-
-		~VirtualFile();
-
 		std::string getPath();
+
+		void destroy();
 };
 
+// Static | public
+template <class T>
+VirtualFile<T>* VirtualFile<T>::create() {
+	return new VirtualFile<T>();
+}
+
+template <class T>
+VirtualFile<T>* VirtualFile<T>::create(const std::string& name) {
+	return new VirtualFile<T>(name);
+}
+
+template <class T>
+VirtualFile<T>* VirtualFile<T>::create(const std::string& name, T data) {
+	return new VirtualFile<T>(name, data);
+}
+
+template <class T>
+VirtualFile<T>* VirtualFile<T>::create(const std::string& name, T data, VirtualFile<T>* parentDirectory) {
+	return new VirtualFile<T>(name, data, parentDirectory);
+}
+
+// Object | private
 template <class T>
 VirtualFile<T>::VirtualFile() {
 	name = "";
@@ -80,26 +105,7 @@ VirtualFile<T>::~VirtualFile() {
 
 }
 
-template <class T>
-VirtualFile<T>* VirtualFile<T>::create() {
-	return new VirtualFile<T>();
-}
-
-template <class T>
-VirtualFile<T>* VirtualFile<T>::create(const std::string& name) {
-	return new VirtualFile<T>(name);
-}
-
-template <class T>
-VirtualFile<T>* VirtualFile<T>::create(const std::string& name, T data) {
-	return new VirtualFile<T>(name, data);
-}
-
-template <class T>
-VirtualFile<T>* VirtualFile<T>::create(const std::string& name, T data, VirtualFile<T>* parentDirectory) {
-	return new VirtualFile<T>(name, data, parentDirectory);
-}
-
+// Object | public
 template <class T>
 std::string VirtualFile<T>::getPath() {
 	std::string path = name;
@@ -109,6 +115,11 @@ std::string VirtualFile<T>::getPath() {
 		parentDirectory = parentDirectory->parentDirectory;
 	}
 	return path;
+}
+
+template <class T>
+void VirtualFile<T>::destroy() {
+	delete this;
 }
 
 // VirtualDirectory
@@ -238,43 +249,4 @@ unsigned int VirtualDirectory<U>::getFileCount() {
 template <class U>
 void VirtualDirectory<U>::destroy() {
 	delete this;
-}
-
-// VirtualFileTree
-template <class V>
-class VirtualDirectoryTree {
-	private:
-		VirtualDirectory<V>* root;
-	public:
-		VirtualDirectoryTree();
-		VirtualDirectoryTree(VirtualDirectory<V>* root);
-		VirtualDirectoryTree(const VirtualDirectoryTree<V>& otherVirtualFileTree);
-		void operator = (const VirtualDirectoryTree<V>& otherVirtualFileTree);
-		~VirtualDirectoryTree();
-};
-
-template <class V>
-VirtualDirectoryTree<V>::VirtualDirectoryTree() {
-	root = nullptr;
-}
-
-template <class V>
-VirtualDirectoryTree<V>::VirtualDirectoryTree(VirtualDirectory<V>* root) {
-	this->root = root;
-}
-
-template <class V>
-VirtualDirectoryTree<V>::VirtualDirectoryTree(const VirtualDirectoryTree<V>& otherVirtualFileTree) {
-	// To-Do: Implement once class is complete
-}
-
-template <class V>
-void VirtualDirectoryTree<V>::operator = (const VirtualDirectoryTree<V>& otherVirtualFileTree) {
-	// To-Do: Implement once class is complete
-}
-
-template <class V>
-VirtualDirectoryTree<V>::~VirtualDirectoryTree() {
-	if (root != nullptr)
-		delete root;
 }
