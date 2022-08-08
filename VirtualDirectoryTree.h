@@ -5,7 +5,6 @@ using namespace std;
 
 #include <string>
 #include "ArrayList.h"
-#include "Array.h"
 
 template <class T> class VirtualFile;
 template <class U> class VirtualDirectory;
