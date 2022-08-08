@@ -133,7 +133,7 @@ std::string VirtualFile<T>::getPath() {
 	std::string path = name;
 	VirtualDirectory<T>* parentDirectory = this->parentDirectory;
 	while (parentDirectory != nullptr) {
-		name = parentDirectory->name + "\\" + name;
+		path = parentDirectory->name + "\\" + path;
 		parentDirectory = parentDirectory->parentDirectory;
 	}
 	return path;
@@ -283,7 +283,7 @@ std::string VirtualDirectory<U>::getPath() {
 	std::string path = name;
 	VirtualDirectory<U>* parentDirectory = this->parentDirectory;
 	while (parentDirectory != nullptr) {
-		name = parentDirectory->name + "\\" + name;
+		path = parentDirectory->name + "\\" + path;
 		parentDirectory = parentDirectory->parentDirectory;
 	}
 	return path;
