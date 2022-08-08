@@ -1,8 +1,5 @@
 #pragma once
 
-#include <iostream>
-using namespace std;
-
 #include <string>
 #include "ArrayList.h"
 
@@ -256,7 +253,6 @@ VirtualDirectory<U>::~VirtualDirectory() {
 			virtualDirectories->get(0)->destroy();
 		}
 	}
-	cout << "VirtualDirectory deleted" << endl;
 }
 
 // Object | public
