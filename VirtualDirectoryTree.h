@@ -1,7 +1,11 @@
 #pragma once
 
+#include <iostream>
+using namespace std;
+
 #include <string>
 #include "ArrayList.h"
+#include "Array.h"
 
 template <class T> class VirtualFile;
 template <class U> class VirtualDirectory;
@@ -18,6 +22,9 @@ class VirtualFile {
 		static VirtualFile<T>* create(const std::string& name, T data, VirtualFile<T>* parentDirectory);
 	// Object
 	private:
+		std::string name;
+		VirtualDirectory<T>* parentDirectory;
+
 		VirtualFile();
 		VirtualFile(const std::string& name);
 		VirtualFile(const std::string& name, T data);
@@ -26,11 +33,14 @@ class VirtualFile {
 		void operator = (const VirtualFile& otherVirtualFile);
 		~VirtualFile();
 	public:
-		std::string name;
 		T data;
-		VirtualDirectory<T>* parentDirectory;
 
+		bool setName(const std::string& name);
+		std::string getName();
 		std::string getPath();
+
+		bool setParentDirectory(VirtualDirectory<T>* parentDirectory);
+		VirtualDirectory<T>* getParentDirectory();
 
 		void destroy();
 };
@@ -103,14 +113,50 @@ VirtualFile<T>::~VirtualFile() {
 
 // Object | public
 template <class T>
+bool VirtualFile<T>::setName(const std::string& name) {
+	if (parentDirectory == nullptr) {
+		this->name = name;
+		return true;
+	}
+	for (unsigned int i = 0; i < parentDirectory->virtualFiles->getSize(); i++)
+		if (name == parentDirectory->virtualFiles->get(i)->getName())
+			return false;
+	this->name = name;
+	return true;
+}
+
+template <class T>
+std::string VirtualFile<T>::getName() {
+	return name;
+}
+
+template <class T>
 std::string VirtualFile<T>::getPath() {
 	std::string path = name;
 	VirtualDirectory<T>* parentDirectory = this->parentDirectory;
 	while (parentDirectory != nullptr) {
-		name = parentDirectory->name + name;
+		name = parentDirectory->name + "\\" + name;
 		parentDirectory = parentDirectory->parentDirectory;
 	}
 	return path;
+}
+
+template <class T>
+bool VirtualFile<T>::setParentDirectory(VirtualDirectory<T>* parentDirectory) {
+	if (parentDirectory == nullptr)
+		return false;
+	for (unsigned int i = 0; i < parentDirectory->virtualFiles->getSize(); i++)
+		if (parentDirectory->virtualFiles->get(i)->getName() == name)
+			return false;
+	if (this->parentDirectory != nullptr)
+		parentDirectory->virtualFiles->remove(this);
+	this->parentDirectory = parentDirectory;
+	return true;
+}
+
+template <class T>
+VirtualDirectory<T>* VirtualFile<T>::getParentDirectory() {
+	return parentDirectory;
 }
 
 template <class T>
@@ -128,16 +174,24 @@ class VirtualDirectory {
 		static VirtualDirectory<U>* create(const VirtualDirectory<U>& otherVirtualDirectory);
 	// Object
 	private:
+		std::string name;
+
 		VirtualDirectory();
 		VirtualDirectory(const std::string& name);
 		VirtualDirectory(const VirtualDirectory<U>& otherVirtualDirectory);
 		void operator = (const VirtualDirectory<U>& otherVirtualDirectory);
 		~VirtualDirectory();
 	public:
-		std::string name;
 		ArrayList<VirtualDirectory<U>*>* virtualDirectories;
 		ArrayList<VirtualFile<U>*> virtualFiles;
 		VirtualDirectory<U>* parentDirectory;
+
+		bool setName(const std::string& name);
+		std::string getName();
+		std::string getPath();
+
+		bool setParentDirectory(VirtualDirectory<U>* parentDirectory);
+		VirtualDirectory<U>* getParentDirectory();
 
 		void addDirectory(VirtualDirectory<U>* virtualDirectory);
 		VirtualDirectory<U>* getDirectories();
@@ -209,6 +263,53 @@ VirtualDirectory<U>::~VirtualDirectory() {
 
 // Object | public
 template <class U>
+bool VirtualDirectory<U>::setName(const std::string& name) {
+	if (parentDirectory == nullptr) {
+		this->name = name;
+		return true;
+	}
+	for (unsigned int i = 0; i < parentDirectory->virtualDirectory->getSize(); i++)
+		if (name == parentDirectory->virtualDirectory->get(i)->getName())
+			return false;
+	this->name = name;
+	return true;
+}
+
+template <class U>
+std::string VirtualDirectory<U>::getName() {
+	return name;
+}
+
+template <class U>
+std::string VirtualDirectory<U>::getPath() {
+	std::string path = name;
+	VirtualDirectory<U>* parentDirectory = this->parentDirectory;
+	while (parentDirectory != nullptr) {
+		name = parentDirectory->name + "\\" + name;
+		parentDirectory = parentDirectory->parentDirectory;
+	}
+	return path;
+}
+
+template <class U>
+bool VirtualDirectory<U>::setParentDirectory(VirtualDirectory<U>* parentDirectory) {
+	if (parentDirectory == nullptr)
+		return false;
+	for (unsigned int i = 0; i < parentDirectory->virtualDirectories->getSize(); i++)
+		if (parentDirectory->virtualDirectories->get(i)->getName() == name)
+			return false;
+	if (this->parentDirectory != nullptr)
+		parentDirectory->virtualDirectories->remove(this);
+	this->parentDirectory = parentDirectory;
+	return true;
+}
+
+template <class U>
+VirtualDirectory<U>* VirtualDirectory<U>::getParentDirectory() {
+	return parentDirectory;
+}
+
+template <class U>
 void VirtualDirectory<U>::addDirectory(VirtualDirectory<U>* virtualDirectory) {
 	if (virtualDirectories == nullptr) {
 		virtualDirectories = new ArrayList<VirtualDirectory<U>*>();
@@ -229,6 +330,9 @@ unsigned int VirtualDirectory<U>::getDirectoryCount() {
 
 template <class U>
 void VirtualDirectory<U>::addFile(VirtualFile<U>* virtualFile) {
+	for (unsigned int i = 0; i < virtualFiles->getSize(); i++)
+		if (virtualFiles->get(i)->name == virtualFile->name)
+			return;
 	virtualFiles.add(virtualFile);
 }
 
