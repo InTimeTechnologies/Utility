@@ -23,32 +23,54 @@ class Array {
 
 template <class T>
 Array<T>::Array() {
-	genericArray = new T[1];
-	size = 1;
+	genericArray = nullptr;
+	size = 0;
 }
 
 template <class T>
 Array<T>::Array(unsigned int size) {
+	if (size == 0) {
+		genericArray = nullptr;
+		size = 0;
+		return;
+	}
 	genericArray = new T[size];
 	this->size = size;
 }
 
 template <class T>
-Array<T>::Array(unsigned int size, T* data) : Array<T>(size) {
+Array<T>::Array(unsigned int size, T* data) {
+	if (size == 0 || data == nullptr) {
+		genericArray = nullptr;
+		size = 0;
+		return;
+	}
+	genericArray = new T[size];
+	this->size = size;
 	for (unsigned int i = 0; i < size; i++)
 		genericArray[i] = data[i];
 }
 
 template <class T>
-Array<T>::Array(const Array<T>& otherArray) : Array<T>(otherArray.size, otherArray.genericArray) {
+Array<T>::Array(const Array<T>& otherArray) {
+	if (otherArray.size == 0 || otherArray.genericArray == nullptr) {
+		genericArray = nullptr;
+		size = 0;
+		return;
+	}
 	genericArray = new T[otherArray.size];
+	this->size = otherArray.size;
 	for (unsigned int i = 0; i < otherArray.size; i++)
-		genericArray = otherArray.genericArray[i];
-	size = otherArray.size;
+		genericArray[i] = otherArray.genericArray[i];
 }
 
 template <class T>
 void Array<T>::operator = (const Array<T>& otherArray) {
+	if (otherArray.size == 0 || otherArray.genericArray == nullptr) {
+		genericArray = nullptr;
+		size = 0;
+		return;
+	}
 	genericArray = new T[otherArray.size];
 	for (unsigned int i = 0; i < otherArray.size; i++)
 		genericArray = otherArray.genericArray[i];
