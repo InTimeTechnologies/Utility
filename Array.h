@@ -2,23 +2,23 @@
 
 template <class T>
 class Array {
-	private:
-		T* genericArray;
-		unsigned int size;
-	public:
-		Array();
-		Array(unsigned int size);
-		Array(unsigned int size, T* data);
-		Array(const Array& otherArray);                     // O(n)
-		
-		void operator = (const Array& otherArray);          // O(n)
+private:
+	T* genericArray;
+	unsigned int size;
+public:
+	Array();
+	Array(unsigned int size);
+	Array(unsigned int size, T* data);
+	Array(const Array& otherArray);                     // O(n)
 
-		void set(T element, unsigned int i);                // O(1)
-		T get(unsigned int i);                              // O(1)
-		T* getArray();                                      // O(1)
-		unsigned int getSize();                             // O(1)
+	void operator = (const Array& otherArray);          // O(n)
 
-		~Array();
+	void set(T element, unsigned int i);                // O(1)
+	T get(unsigned int i);                              // O(1)
+	T* getArray();                                      // O(1)
+	unsigned int getSize();                             // O(1)
+
+	~Array();
 };
 
 template <class T>
@@ -73,7 +73,7 @@ void Array<T>::operator = (const Array<T>& otherArray) {
 	}
 	genericArray = new T[otherArray.size];
 	for (unsigned int i = 0; i < otherArray.size; i++)
-		genericArray = otherArray.genericArray[i];
+		genericArray[i] = otherArray.genericArray[i];
 	size = otherArray.size;
 }
 
