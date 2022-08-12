@@ -9,9 +9,9 @@ class Array {
 		Array();
 		Array(unsigned int size);
 		Array(unsigned int size, T* data);
-		Array(const Array& otherArrayObject);               // O(n)
+		Array(const Array& otherArray);                     // O(n)
 		
-		void operator = (const Array& otherArrayObject);    // O(n)
+		void operator = (const Array& otherArray);          // O(n)
 
 		void set(T element, unsigned int i);                // O(1)
 		T get(unsigned int i);                              // O(1)
@@ -40,14 +40,19 @@ Array<T>::Array(unsigned int size, T* data) : Array<T>(size) {
 }
 
 template <class T>
-Array<T>::Array(const Array<T>& otherArrayObject) : Array<T>(otherArrayObject.size, otherArrayObject.genericArray) {
-	
+Array<T>::Array(const Array<T>& otherArray) : Array<T>(otherArray.size, otherArray.genericArray) {
+	genericArray = new T[otherArray.size];
+	for (unsigned int i = 0; i < otherArray.size; i++)
+		genericArray = otherArray.genericArray[i];
+	size = otherArray.size;
 }
 
 template <class T>
-void Array<T>::operator = (const Array<T>& otherArrayObject) {
-	this->genericArray = new T[otherArrayObject.size];
-	size = otherArrayObject.size;
+void Array<T>::operator = (const Array<T>& otherArray) {
+	genericArray = new T[otherArray.size];
+	for (unsigned int i = 0; i < otherArray.size; i++)
+		genericArray = otherArray.genericArray[i];
+	size = otherArray.size;
 }
 
 template <class T>
