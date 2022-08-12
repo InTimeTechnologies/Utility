@@ -31,7 +31,7 @@ template <class T>
 Array<T>::Array(unsigned int size) {
 	if (size == 0) {
 		genericArray = nullptr;
-		size = 0;
+		this->size = 0;
 		return;
 	}
 	genericArray = new T[size];
