@@ -1,83 +1,130 @@
 #pragma once
 
-template <class T>
-class ArrayList {
-	private:
-		T* genericArray;
-		unsigned int size;
-		unsigned int capacity;
+#include "BaseArrayList.h"
 
+template <class T>
+class ArrayList : public BaseArrayList {
+	// Object
+	private:
+		// Properties
+		unsigned int capacity;
+		unsigned int size;
+		T* genericArray;
 	public:
+		// Constructors / Destructor
 		ArrayList();
 		ArrayList(unsigned int capacity);
-		ArrayList(T* data, unsigned int size, unsigned int capacity);
-		ArrayList(const ArrayList& otherArrayList);         // O(n)
-
-		void operator = (const ArrayList& otherArrayList);  // O(n)
-
-		void set(T element, unsigned int i);                // O(1)
-		void add(T element);                                // O(1) or O(n)
-		void insert(T element, unsigned int i);             // O(1) or O(n)
-		bool removeAt(unsigned int i);                      // O(1)
-		bool remove(T element);                             // O(n)
-		T get(unsigned int i);                              // O(1)
-		void setCapacity(unsigned int capacity);            // O(n)
-		T* getArray();                                      // O(1)
-
-		unsigned int getSize();                             // O(1)
-		unsigned int getCapacity();                         // O(1)
-
+		ArrayList(unsigned int capacity, unsigned int size, T* elements);
+		void operator = (const ArrayList& otherArrayList);
 		~ArrayList();
+
+		// Setters
+		void setCapacity(unsigned int capacity);
+		void setSize(unsigned int size);
+		void set(unsigned int i, T element);
+
+		// Getters
+		unsigned int getCapacity();
+		unsigned int getSize();
+		T* getGenericArray();
+		T get(unsigned int i);
+
+		// Functions
+		void add(T element);
+		void addAt(unsigned int i, T element);
+
+		void remove(T element);
+		void removeAt(unsigned int i);
+
+		void rebuildArray();
 };
 
+// Object | public
+// Constructors / Destructors
 template <class T>
 ArrayList<T>::ArrayList() {
-	genericArray = new T[1];
+	capacity = defaultCapacity;
 	size = 0;
-	capacity = 1;
+	genericArray = new T[capacity];
 }
-
 template <class T>
 ArrayList<T>::ArrayList(unsigned int capacity) {
-	genericArray = new T[capacity];
+	if (capacity < defaultCapacity)
+		capacity = defaultCapacity;
+	this->capacity = capacity;
 	size = 0;
-	this->capacity = capacity;
-}
-
-template <class T>
-ArrayList<T>::ArrayList(T* data, unsigned int size, unsigned int capacity) {
-	if (capacity < size)
-		capacity = size;
 	genericArray = new T[capacity];
-	this->size = size;
-	this->capacity = capacity;
-	for (unsigned int i = 0; i < size; i++)
-		genericArray[i] = data[i];
 }
 
 template <class T>
-ArrayList<T>::ArrayList(const ArrayList& otherArrayList) {
-	genericArray = new T[otherArrayList.capacity];
-	size = otherArrayList.size;
-	capacity = otherArrayList.capacity;
-	for (unsigned int i = 0; i < otherArrayList.size; i++)
-		genericArray[i] = otherArrayList.genericArray[i];
+ArrayList<T>::ArrayList(unsigned int capacity, unsigned int size, T* elements) {
+	if (capacity < defaultCapacity)
+		capacity = defaultCapacity;
+	if (size < capacity)
+		size = capacity;
+	this->capacity = capacity;
+	this->size = size;
+	genericArray = new T[capacity];
+
+	if (elements == nullptr)
+		return;
+
+	for (unsigned int i = 0; i < size; i++)
+		genericArray[i] = elements[i];
 }
 
 template <class T>
 void ArrayList<T>::operator = (const ArrayList<T>& otherArrayList) {
-	genericArray = new T[capacity];
+	capacity = otherArrayList.capacity;
 	size = otherArrayList.size;
-	capacity = otherArrayList.size;
+	if (genericArray != nullptr)
+		delete(genericArray);
+	genericArray = new T[capacity];
+
 	for (unsigned int i = 0; i < size; i++)
 		genericArray[i] = otherArrayList.genericArray[i];
 }
 
 template <class T>
-void ArrayList<T>::set(T element, unsigned int i) {
-	if (i >= size)
+ArrayList<T>::~ArrayList() {
+	delete[] genericArray;
+}
+
+// Setters
+template <class T>
+void ArrayList<T>::setCapacity(unsigned int capacity) {
+	if (capacity < defaultCapacity)
+		capacity = defaultCapacity;
+	this->capacity = capacity;
+	if (size > capacity)
+		size = capacity;
+
+	T* tempGenericArray = new T[capacity];
+	for (unsigned int i = 0; i < size; i++)
+		tempGenericArray[i] = genericArray[i];
+
+	delete[] genericArray;
+	genericArray = tempGenericArray;
+}
+
+template <class T>
+void ArrayList<T>::setSize(unsigned int size) {
+	if (size > capacity)
+		return;
+	this->size = size;
+}
+
+template <class T>
+void ArrayList<T>::set(unsigned int i, T element) {
+	if (i > size)
 		return;
 	genericArray[i] = element;
+}
+
+// Getters
+template <class T>
+unsigned int ArrayList<T>::getCapacity() {
+	return capacity;
 }
 
 template <class T>
@@ -86,94 +133,82 @@ unsigned int ArrayList<T>::getSize() {
 }
 
 template <class T>
-unsigned int ArrayList<T>::getCapacity() {
-	return capacity;
-}
-
-template <class T>
-void ArrayList<T>::add(T element) {
-	if (size == capacity)
-		setCapacity(capacity * 2);
-	set(element, size++);
-}
-
-template <class T>
-void ArrayList<T>::insert(T element, unsigned int i) {
-	if (i > size)
-		return;
-	if (size == capacity)
-		setCapacity(capacity * 2);
-
-	size++;
-	T currentElement = element;
-	for (unsigned int j = i; j < size; j++) {
-		T tempElement = genericArray[j];
-		genericArray[j] = currentElement;
-		currentElement = tempElement;
-	}
-}
-
-template <class T>
-bool ArrayList<T>::removeAt(unsigned int i) {
-	if (i >= size)
-		return false;
-	while (i < size - 1) {
-		genericArray[i] = genericArray[i + 1];
-		i++;
-	}
-	size--;
-	return true;
-}
-
-template <class T>
-bool ArrayList<T>::remove(T element) {
-	if (size == 0)
-		return false;
-	for (unsigned int i = 0; i < size; i++) {
-		if (genericArray[i] == element) {
-			while (i < size - 1) {
-				genericArray[i] = genericArray[i + 1];
-				i++;
-			}
-			size--;
-			return true;
-		}
-	}
-	return false;
-}
-
-template <class T>
-T* ArrayList<T>::getArray() {
+T* ArrayList<T>::getGenericArray() {
 	return genericArray;
 }
 
 template <class T>
 T ArrayList<T>::get(unsigned int i) {
-	if (i >= size)
-		throw 1;
+	if (i > size)
+		size = 0;
 	return genericArray[i];
 }
 
+// Functions
 template <class T>
-void ArrayList<T>::setCapacity(unsigned int capacity) {
-	T* oldGenericArray = genericArray;
-	unsigned int oldSize = size;
-	unsigned int oldCapacity = this->capacity;
-
-	if (capacity == 0)
-		capacity = 1;
-
-	genericArray = new T[capacity];
-	for (unsigned int i = 0; i < this->capacity; i++)
-		genericArray[i] = oldGenericArray[i];
-	if (oldSize > capacity)
-		size = capacity;
-	this->capacity = capacity;
-
-	delete[] oldGenericArray;
+void ArrayList<T>::add(T element) {
+	if (size == capacity)
+		setCapacity(capacity * 2);
+	genericArray[size++] = element;
 }
 
 template <class T>
-ArrayList<T>::~ArrayList() {
+void ArrayList<T>::addAt(unsigned int i, T element) {
+	if (size == capacity)
+		setCapacity(capacity * 2);
+	if (size == 0) {
+		genericArray[0] = element;
+		return;
+	}
+	if (i == size) {
+		genericArray[size++];
+		return;
+	}
+	
+	// Shift elements, then add element to i
+	for (unsigned int j = size; j >= i; j--)
+		genericArray[j] = genericArray[j - 1];
+	genericArray[i] = element;
+	size++;
+}
+
+template <class T>
+void ArrayList<T>::remove(T element) {
+	if (size == 0)
+		return;
+	if (size == 1) {
+		size--;
+		return;
+	}
+
+	// Search for element, then shift leftover elements one index towards it
+	for (unsigned int i = 0; i < size; i++)
+		if (element == genericArray[i])
+			for (; i < size - 1; i++)
+				genericArray[i] = genericArray[i + 1];
+	size--;
+}
+
+template <class T>
+void ArrayList<T>::removeAt(unsigned int i) {
+	if (size == 0)
+		return;
+	if (size == 1) {
+		size--;
+		return;
+	}
+
+	// Search for element, then shift leftover elements one index towards it
+	for (; i < size - 1; i++)
+		genericArray[i] = genericArray[i + 1];
+	size--;
+}
+
+template <class T>
+void ArrayList<T>::rebuildArray() {
+	T* newGenericArray = new T[capacity];
+	for (unsigned int i = 0; i < size; i++)
+		newGenericArray[i] = genericArray[i];
 	delete[] genericArray;
+	genericArray = newGenericArray;
 }
