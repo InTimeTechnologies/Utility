@@ -31,6 +31,9 @@ template <class T> class DoublyLinkedNode {
 		DoublyLinkedList<T>* getDoublyLinkedList();
 		DoublyLinkedNode<T>* getPreviousNode();
 		DoublyLinkedNode<T>* getNextNode();
+
+		// Functions
+		void selfRemove();
 };
 
 // class DoublyLinkedList
@@ -43,7 +46,6 @@ template <class T> class DoublyLinkedList {
 		unsigned int size;
 		DoublyLinkedNode<T>* headNode;
 		DoublyLinkedNode<T>* tailNode;
-
 	public:
 		// Constructors / Destructor
 		DoublyLinkedList();                                                               // O(1)
@@ -151,6 +153,11 @@ template <class T> DoublyLinkedNode<T>* DoublyLinkedNode<T>::getPreviousNode() {
 }
 template <class T> DoublyLinkedNode<T>* DoublyLinkedNode<T>::getNextNode() {
 	return nextNode;
+}
+
+// Functions
+template <class T> void DoublyLinkedNode<T>::selfRemove() {
+	delete(this);
 }
 
 // class DoublyLinkedList
