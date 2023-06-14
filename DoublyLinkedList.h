@@ -1,16 +1,21 @@
 #pragma once
 
+// Forward declarations | Utility
 template <class T> class DoublyLinkedNode;
 template <class T> class DoublyLinkedList;
 
-// DoublyLinkedNode
-template <class T>
-class DoublyLinkedNode {
-	public:
+// class DoublyLinkedNode
+template <class T> class DoublyLinkedNode {
+	// Friends
+	friend class DoublyLinkedList<T>;
+	// Object
+	private:
 		// Properties
 		DoublyLinkedList<T>* doublyLinkedList;
 		DoublyLinkedNode<T>* previousNode;
 		DoublyLinkedNode<T>* nextNode;
+	public:
+		// Properties
 		T data;
 
 		// Constructors / Destructor
@@ -21,46 +26,17 @@ class DoublyLinkedNode {
 		DoublyLinkedNode(const DoublyLinkedNode<T> &doublyLinkedNode);
 		void operator = (const DoublyLinkedNode<T>& doublyLinkedNode);
 		~DoublyLinkedNode();
+
+		// Getters
+		DoublyLinkedList<T>* getDoublyLinkedList();
+		DoublyLinkedNode<T>* getPreviousNode();
+		DoublyLinkedNode<T>* getNextNode();
 };
 
-template <class T>
-DoublyLinkedNode<T>::DoublyLinkedNode() : doublyLinkedList(nullptr), previousNode(nullptr), nextNode(nullptr) {
-
-}
-template <class T>
-DoublyLinkedNode<T>::DoublyLinkedNode(DoublyLinkedList<T>* doublyLinkedList) : doublyLinkedList(doublyLinkedList), previousNode(nullptr), nextNode(nullptr) {
-
-}
-template <class T>
-DoublyLinkedNode<T>::DoublyLinkedNode(T data) : doublyLinkedList(nullptr), previousNode(nullptr), nextNode(nullptr), data(data) {
-
-}
-template <class T>
-DoublyLinkedNode<T>::DoublyLinkedNode(DoublyLinkedList<T>* doublyLinkedList, T data) : doublyLinkedList(doublyLinkedList), previousNode(nullptr), nextNode(nullptr), data(data) {
-
-}
-template <class T>
-DoublyLinkedNode<T>::DoublyLinkedNode(const DoublyLinkedNode<T>& doublyLinkedNode) {
-	doublyLinkedList = doublyLinkedNode.doublyLinkedList;
-	previousNode = doublyLinkedNode.previousNode;
-	nextNode = doublyLinkedNode.nextNode;
-	data = doublyLinkedNode.data;
-}
-template <class T>
-void DoublyLinkedNode<T>::operator = (const DoublyLinkedNode<T>& doublyLinkedNode) {
-	doublyLinkedList = doublyLinkedNode.doublyLinkedList;
-	previousNode = doublyLinkedNode.previousNode;
-	nextNode = doublyLinkedNode.nextNode;
-	data = doublyLinkedNode.data;
-}
-template <class T>
-DoublyLinkedNode<T>::~DoublyLinkedNode() {
-
-}
-
-// DoublyLinkedList
-template <class T>
-class DoublyLinkedList {
+// class DoublyLinkedList
+template <class T> class DoublyLinkedList {
+	// Friends
+	friend class DoublyLinkedNode<T>;
 	// Object
 	private:
 		// Properties
@@ -91,25 +67,101 @@ class DoublyLinkedList {
 		DoublyLinkedNode<T>* addNextOf(DoublyLinkedNode<T>* referenceNode, T data);       // O(1)
 
 		void remove(T data);                                                              // O(n)
-		void remove(DoublyLinkedNode<T>* doublyLinkedNode);                               // O(1)
 		void removeAt(unsigned int i);                                                    // O(n)
 		void removeHeadNode();                                                            // O(1)
 		void removeTailNode();                                                            // O(1)
 
-		bool contains(T data);                                                            // O(n)
-		bool contains(DoublyLinkedNode<T>* doublyLinkedNode);                             // O(1)
+		bool has(T data);                                                                 // O(n)
 
 		void clear();                                                                     // O(n)
-
 };
 
-// Constructors / Destructor
-template <class T>
-DoublyLinkedList<T>::DoublyLinkedList() : size(0), headNode(nullptr), tailNode(nullptr) {
+// class DoublyLinkedNode
+
+// Object | public
+
+// Constructor / Destructor
+template <class T> DoublyLinkedNode<T>::DoublyLinkedNode() : doublyLinkedList(nullptr), previousNode(nullptr), nextNode(nullptr) {
 
 }
-template <class T>
-DoublyLinkedList<T>::DoublyLinkedList(const DoublyLinkedList<T>& doublyLinkedList) : DoublyLinkedList() {
+template <class T> DoublyLinkedNode<T>::DoublyLinkedNode(DoublyLinkedList<T>* doublyLinkedList) : doublyLinkedList(doublyLinkedList), previousNode(nullptr), nextNode(nullptr) {
+
+}
+template <class T> DoublyLinkedNode<T>::DoublyLinkedNode(T data) : doublyLinkedList(nullptr), previousNode(nullptr), nextNode(nullptr), data(data) {
+
+}
+template <class T> DoublyLinkedNode<T>::DoublyLinkedNode(DoublyLinkedList<T>* doublyLinkedList, T data) : doublyLinkedList(doublyLinkedList), previousNode(nullptr), nextNode(nullptr), data(data) {
+
+}
+template <class T> DoublyLinkedNode<T>::DoublyLinkedNode(const DoublyLinkedNode<T>& doublyLinkedNode) {
+	doublyLinkedList = doublyLinkedNode.doublyLinkedList;
+	previousNode = doublyLinkedNode.previousNode;
+	nextNode = doublyLinkedNode.nextNode;
+	data = doublyLinkedNode.data;
+}
+template <class T> void DoublyLinkedNode<T>::operator = (const DoublyLinkedNode<T>& doublyLinkedNode) {
+	doublyLinkedList = doublyLinkedNode.doublyLinkedList;
+	previousNode = doublyLinkedNode.previousNode;
+	nextNode = doublyLinkedNode.nextNode;
+	data = doublyLinkedNode.data;
+}
+template <class T> DoublyLinkedNode<T>::~DoublyLinkedNode() {
+	// If node is not associated with list, return
+	if (doublyLinkedList == nullptr)
+		return;
+
+	// If list is empty, return
+	if (doublyLinkedList->getSize() == 0)
+		return;
+
+	// If there is only one node in the list, reset list
+	if (doublyLinkedList->getSize() == 1) {
+		doublyLinkedList->size = 0;
+		doublyLinkedList->headNode = nullptr;
+		doublyLinkedList->tailNode = nullptr;
+		return;
+	}
+
+	// Save left and right node
+	DoublyLinkedNode<T>* leftNode = previousNode;
+	DoublyLinkedNode<T>* rightNode = nextNode;
+
+	// Relink list
+	if (leftNode != nullptr)
+		leftNode->nextNode = rightNode;
+	if (rightNode != nullptr)
+		rightNode->previousNode = leftNode;
+
+	// If node is tail or head node, update list
+	if (this == doublyLinkedList->getHeadNode())
+		doublyLinkedList->headNode = rightNode;
+	if (this == doublyLinkedList->getTailNode())
+		doublyLinkedList->tailNode = leftNode;
+
+	// Update list's size
+	doublyLinkedList->size--;
+}
+
+// Getters
+template <class T> DoublyLinkedList<T>* DoublyLinkedNode<T>::getDoublyLinkedList() {
+	return doublyLinkedList;
+}
+template <class T> DoublyLinkedNode<T>* DoublyLinkedNode<T>::getPreviousNode() {
+	return previousNode;
+}
+template <class T> DoublyLinkedNode<T>* DoublyLinkedNode<T>::getNextNode() {
+	return nextNode;
+}
+
+// class DoublyLinkedList
+
+// Object | public
+
+// Constructors / Destructor
+template <class T> DoublyLinkedList<T>::DoublyLinkedList() : size(0), headNode(nullptr), tailNode(nullptr) {
+
+}
+template <class T> DoublyLinkedList<T>::DoublyLinkedList(const DoublyLinkedList<T>& doublyLinkedList) : DoublyLinkedList() {
 	DoublyLinkedNode<T>* currentNode = doublyLinkedList.headNode;
 	if (currentNode == nullptr)
 		return;
@@ -120,8 +172,7 @@ DoublyLinkedList<T>::DoublyLinkedList(const DoublyLinkedList<T>& doublyLinkedLis
 		currentNode = currentNode->nextNode;
 	}
 }
-template <class T>
-void DoublyLinkedList<T>::operator = (const DoublyLinkedList<T>& doublyLinkedList) {
+template <class T> void DoublyLinkedList<T>::operator = (const DoublyLinkedList<T>& doublyLinkedList) {
 	clear();
 
 	DoublyLinkedNode<T>* currentNode = doublyLinkedList.headNode;
@@ -134,29 +185,24 @@ void DoublyLinkedList<T>::operator = (const DoublyLinkedList<T>& doublyLinkedLis
 		currentNode = currentNode->nextNode;
 	}
 }
-template <class T>
-DoublyLinkedList<T>::~DoublyLinkedList() {
+template <class T> DoublyLinkedList<T>::~DoublyLinkedList() {
 	clear();
 }
 
 // Getters
-template <class T>
-unsigned int DoublyLinkedList<T>::getSize() {
+template <class T> unsigned int DoublyLinkedList<T>::getSize() {
 	return size;
 }
 
-template <class T>
-DoublyLinkedNode<T>* DoublyLinkedList<T>::getHeadNode() {
+template <class T> DoublyLinkedNode<T>* DoublyLinkedList<T>::getHeadNode() {
 	return headNode;
 }
 
-template <class T>
-DoublyLinkedNode<T>* DoublyLinkedList<T>::getTailNode() {
+template <class T> DoublyLinkedNode<T>* DoublyLinkedList<T>::getTailNode() {
 	return tailNode;
 }
 
-template <class T>
-DoublyLinkedNode<T>* DoublyLinkedList<T>::getNodeAt(unsigned int i) {
+template <class T> DoublyLinkedNode<T>* DoublyLinkedList<T>::getNodeAt(unsigned int i) {
 	if (i >= size)
 		return nullptr;
 	DoublyLinkedNode<T>* currentNode = headNode;
@@ -166,8 +212,7 @@ DoublyLinkedNode<T>* DoublyLinkedList<T>::getNodeAt(unsigned int i) {
 	return currentNode;	
 }
 
-template <class T>
-DoublyLinkedNode<T>* DoublyLinkedList<T>::getNodeWithData(T data) {
+template <class T> DoublyLinkedNode<T>* DoublyLinkedList<T>::getNodeWithData(T data) {
 	if (size == 0)
 		return nullptr;
 
@@ -183,12 +228,10 @@ DoublyLinkedNode<T>* DoublyLinkedList<T>::getNodeWithData(T data) {
 }
 
 // Functions
-template <class T>
-DoublyLinkedNode<T>* DoublyLinkedList<T>::add(T data) {
+template <class T> DoublyLinkedNode<T>* DoublyLinkedList<T>::add(T data) {
 	return addToTail(data);
 }
-template <class T>
-DoublyLinkedNode<T>* DoublyLinkedList<T>::addToHead(T data) {
+template <class T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addToHead(T data) {
 	DoublyLinkedNode<T>* doublyLinkedNode = new DoublyLinkedNode<T>(this, data);
 	if (size == 0) {
 		headNode = doublyLinkedNode;
@@ -204,8 +247,7 @@ DoublyLinkedNode<T>* DoublyLinkedList<T>::addToHead(T data) {
 
 	return doublyLinkedNode;
 }
-template <class T>
-DoublyLinkedNode<T>* DoublyLinkedList<T>::addToTail(T data) {
+template <class T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addToTail(T data) {
 	DoublyLinkedNode<T>* doublyLinkedNode = new DoublyLinkedNode<T>(this, data);
 	if (size == 0) {
 		headNode = doublyLinkedNode;
@@ -221,8 +263,7 @@ DoublyLinkedNode<T>* DoublyLinkedList<T>::addToTail(T data) {
 
 	return doublyLinkedNode;
 }
-template <class T>
-DoublyLinkedNode<T>* DoublyLinkedList<T>::addAt(unsigned int i, T data) {
+template <class T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addAt(unsigned int i, T data) {
 	if (i > size)
 		return;
 	if (i == 0)
@@ -249,9 +290,8 @@ DoublyLinkedNode<T>* DoublyLinkedList<T>::addAt(unsigned int i, T data) {
 
 	return doublyLinkedNode;
 }
-template <class T>
-DoublyLinkedNode<T>* DoublyLinkedList<T>::addPreviousOf(DoublyLinkedNode<T>* referenceNode, T data) {
-	if (referenceNode == nullptr || size == 0 || !contains(referenceNode))
+template <class T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addPreviousOf(DoublyLinkedNode<T>* referenceNode, T data) {
+	if (referenceNode == nullptr || size == 0 || !has(referenceNode))
 		return nullptr;
 	if (referenceNode == headNode)
 		return addToHead(data);
@@ -272,9 +312,8 @@ DoublyLinkedNode<T>* DoublyLinkedList<T>::addPreviousOf(DoublyLinkedNode<T>* ref
 	return doublyLinkedNode;
 	
 }
-template <class T>
-DoublyLinkedNode<T>* DoublyLinkedList<T>::addNextOf(DoublyLinkedNode<T>* referenceNode, T data) {
-	if (referenceNode == nullptr || size == 0 || !contains(referenceNode))
+template <class T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addNextOf(DoublyLinkedNode<T>* referenceNode, T data) {
+	if (referenceNode == nullptr || size == 0 || !has(referenceNode))
 		return nullptr;
 	if (referenceNode == tailNode)
 		return addToTail(data);
@@ -296,8 +335,7 @@ DoublyLinkedNode<T>* DoublyLinkedList<T>::addNextOf(DoublyLinkedNode<T>* referen
 }
 
 
-template <class T>
-void DoublyLinkedList<T>::remove(T data) {
+template <class T> void DoublyLinkedList<T>::remove(T data) {
 	if (size == 0)
 		return;
 	if (size == 1 || headNode->data == data) {
@@ -319,83 +357,38 @@ void DoublyLinkedList<T>::remove(T data) {
 		currentNode = currentNode->nextNode;
 	}
 }
-template <class T>
-void DoublyLinkedList<T>::remove(DoublyLinkedNode<T>* doublyLinkedNode) {
-	if (size == 0 || !contains(doublyLinkedNode))
-		return;
-	
-	if (size == 1 || headNode == doublyLinkedNode) {
-		removeHeadNode();
-		return;
-	}
-	if (tailNode == doublyLinkedNode) {
-		removeTailNode();
-		return;
-	}
-
-	DoublyLinkedNode<T>* leftNode = doublyLinkedNode->previousNode;
-	DoublyLinkedNode<T>* rightNode = doublyLinkedNode->nextNode;
-
-	leftNode->nextNode = rightNode;
-	rightNode->previousNode = leftNode;
-
-	delete(doublyLinkedNode);
-	size--;
-}
-template <class T>
-void DoublyLinkedList<T>::removeAt(unsigned int i) {
+template <class T> void DoublyLinkedList<T>::removeAt(unsigned int i) {
+	// If list is empty, return
 	if (size == 0)
 		return;
 	
+	// Search for node at index == i and delete / remove it
 	DoublyLinkedNode<T>* currentNode = headNode;
 	for (unsigned int j = 0; j < i; j++)
 		currentNode = currentNode->nextNode;
-
-	remove(currentNode);
+	delete(currentNode);
 }
 template <class T>
 void DoublyLinkedList<T>::removeHeadNode() {
+	// If list is empty, return
 	if (size == 0)
 		return;
-	if (size == 1) {
+	
+	// Delete / remove head node
+	if (headNode != nullptr)
 		delete(headNode);
-		size--;
-		headNode = nullptr;
-		tailNode = nullptr;
-		return;
-	}
-
-	DoublyLinkedNode<T>* nodeToRemove = headNode;
-
-	headNode = headNode->nextNode;
-	headNode->previousNode = nullptr;
-
-	delete(nodeToRemove);
-	size--;
 }
-template <class T>
-void DoublyLinkedList<T>::removeTailNode() {
+template <class T> void DoublyLinkedList<T>::removeTailNode() {
+	// If list is empty, return
 	if (size == 0)
 		return;
-	if (size == 1) {
+	
+	// Delete / remove tail node
+	if (tailNode != nullptr)
 		delete(tailNode);
-		size--;
-		headNode = nullptr;
-		tailNode = nullptr;
-		return;
-	}
-
-	DoublyLinkedNode<T>* nodeToRemove = tailNode;
-
-	tailNode = tailNode->previousNode;
-	tailNode->nextNode = nullptr;
-
-	delete(nodeToRemove);
-	size--;
 }
 
-template <class T>
-bool DoublyLinkedList<T>::contains(T data) {
+template <class T> bool DoublyLinkedList<T>::has(T data) {
 	if (size == 0)
 		return false;
 
@@ -409,15 +402,8 @@ bool DoublyLinkedList<T>::contains(T data) {
 
 	return false;
 }
-template <class T>
-bool DoublyLinkedList<T>::contains(DoublyLinkedNode<T>* doublyLinkedNode) {
-	if (doublyLinkedNode->doublyLinkedList == this)
-		return true;
-	return false;
-}
 
-template <class T>
-void DoublyLinkedList<T>::clear() {
+template <class T> void DoublyLinkedList<T>::clear() {
 	DoublyLinkedNode<T>* currentNode = headNode;
 	while (currentNode != nullptr) {
 		DoublyLinkedNode<T>* nextNode = currentNode->nextNode;
