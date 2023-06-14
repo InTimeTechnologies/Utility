@@ -1,15 +1,20 @@
 #pragma once
 
+// Forward declarations | Utility
 template <class T> class SinglyLinkedNode;
 template <class T> class SinglyLinkedList;
 
 // SinglyLinkedNode
-template <class T>
-class SinglyLinkedNode {
-	public:
+template <class T> class SinglyLinkedNode {
+	// Friends
+	friend class SinglyLinkedList<T>;
+	// Object
+	private:
 		// Properties
 		SinglyLinkedList<T>* singlyLinkedList;
 		SinglyLinkedNode<T>* nextNode;
+	public:
+		// Properties
 		T data;
 
 		// Constructors / Destructor
@@ -22,51 +27,16 @@ class SinglyLinkedNode {
 		~SinglyLinkedNode();
 };
 
-// Object| public
-// Constructors / Destructor
-template <class T>
-SinglyLinkedNode<T>::SinglyLinkedNode() : singlyLinkedList(nullptr), nextNode(nullptr) {
-
-}
-template <class T>
-SinglyLinkedNode<T>::SinglyLinkedNode(T data) : singlyLinkedList(nullptr), nextNode(nullptr), data(data) {
-
-}
-template <class T>
-SinglyLinkedNode<T>::SinglyLinkedNode(SinglyLinkedList<T>* singlyLinkedList) : singlyLinkedList(singlyLinkedList), nextNode(nullptr) {
-
-}
-template <class T>
-SinglyLinkedNode<T>::SinglyLinkedNode(SinglyLinkedList<T>* singlyLinkedList, T data) : singlyLinkedList(singlyLinkedList), nextNode(nullptr), data(data) {
-
-}
-template <class T>
-SinglyLinkedNode<T>::SinglyLinkedNode(const SinglyLinkedNode<T>& singlyLinkedNode) {
-	this->singlyLinkedList = singlyLinkedNode.singlyLinkedList;
-	this->nextNode = singlyLinkedNode.nextNode;
-	this->data = singlyLinkedNode.data;
-}
-template <class T>
-void SinglyLinkedNode<T>::operator = (const SinglyLinkedNode<T>& singlyLinkedNode) {
-	this->singlyLinkedList = singlyLinkedNode.singlyLinkedList;
-	this->nextNode = singlyLinkedNode.nextNode;
-	this->data = singlyLinkedNode.data;
-}
-template <class T>
-SinglyLinkedNode<T>::~SinglyLinkedNode() {
-	singlyLinkedList = nullptr;
-	nextNode = nullptr;
-}
-
 // SinglyLinkedList
-template <class T>
-class SinglyLinkedList {
+template <class T> class SinglyLinkedList {
+	// Friends
+	friend class SinglyLinkedNode<T>;
+	// Object
 	private:
 		// Properties
 		unsigned int size;
 		SinglyLinkedNode<T>* headNode;
 		SinglyLinkedNode<T>* tailNode;
-
 	public:
 		// Constructors / Destructor
 		SinglyLinkedList();                                                            // O(1)
@@ -86,9 +56,6 @@ class SinglyLinkedList {
 		SinglyLinkedNode<T>* addAt(unsigned int i, T data);                            // O(n)
 		SinglyLinkedNode<T>* addNextOf(SinglyLinkedNode<T>* referenceNode, T data);    // O(1)
 
-		void remove(T data);                                                           // O(n)
-		void removeAt(unsigned int i);                                                 // O(n)
-		void removeNextOf(SinglyLinkedNode<T>* singlyLinkedNode);                      // O(1)
 		void removeHeadNode();                                                         // O(1)
 		void removeTailNode();                                                         // O(1)
 
@@ -98,15 +65,89 @@ class SinglyLinkedList {
 		void clear();                                                                  // O(n)
 };
 
-// Object | public
+// class SinglyLinkedNode
+
+// Object| public
+
 // Constructors / Destructor
-template <class T>
-SinglyLinkedList<T>::SinglyLinkedList() : size(0), headNode(nullptr), tailNode(nullptr) {
+template <class T> SinglyLinkedNode<T>::SinglyLinkedNode() : singlyLinkedList(nullptr), nextNode(nullptr) {
+
+}
+template <class T> SinglyLinkedNode<T>::SinglyLinkedNode(T data) : singlyLinkedList(nullptr), nextNode(nullptr), data(data) {
+
+}
+template <class T> SinglyLinkedNode<T>::SinglyLinkedNode(SinglyLinkedList<T>* singlyLinkedList) : singlyLinkedList(singlyLinkedList), nextNode(nullptr) {
+
+}
+template <class T> SinglyLinkedNode<T>::SinglyLinkedNode(SinglyLinkedList<T>* singlyLinkedList, T data) : singlyLinkedList(singlyLinkedList), nextNode(nullptr), data(data) {
+
+}
+template <class T> SinglyLinkedNode<T>::SinglyLinkedNode(const SinglyLinkedNode<T>& singlyLinkedNode) {
+	this->singlyLinkedList = singlyLinkedNode.singlyLinkedList;
+	this->nextNode = singlyLinkedNode.nextNode;
+	this->data = singlyLinkedNode.data;
+}
+template <class T> void SinglyLinkedNode<T>::operator = (const SinglyLinkedNode<T>& singlyLinkedNode) {
+	this->singlyLinkedList = singlyLinkedNode.singlyLinkedList;
+	this->nextNode = singlyLinkedNode.nextNode;
+	this->data = singlyLinkedNode.data;
+}
+template <class T> SinglyLinkedNode<T>::~SinglyLinkedNode() {
+	// If node not attached to a list, return
+	if (singlyLinkedList == nullptr)
+		return;
+
+	// If list is empty, return
+	if (singlyLinkedList->getSize() == 0)
+		return;
+
+	// If there is only one node in the list, reset list
+	if (singlyLinkedList->getSize() == 1) {
+		singlyLinkedList->size = 0;
+		singlyLinkedList->headNode = nullptr;
+		singlyLinkedList->tailNode = nullptr;
+		return;
+	}
+
+	// Search for node to remove
+	SinglyLinkedNode<T>* previousNode = nullptr;
+	SinglyLinkedNode<T>* currentNode = singlyLinkedList->getHeadNode();
+	while (currentNode != nullptr) {
+		// If node to remove found
+		if (currentNode == this) {
+			// Relink list
+			if (previousNode != nullptr)
+				previousNode->nextNode = currentNode->nextNode;
+			
+			// If node is tail or head node, update list
+			if (singlyLinkedList->headNode == this)
+				singlyLinkedList->headNode = currentNode->nextNode;
+			if (singlyLinkedList->tailNode == this)
+				singlyLinkedList->tailNode = previousNode;
+
+			// Update list's size
+			singlyLinkedList->size--;
+
+			// Stop loop
+			break;
+		}
+
+		// Save previous node and current node
+		previousNode = currentNode;
+		currentNode = currentNode->nextNode;
+	}
+}
+
+// class SinglyLinkedList
+
+// Object | public
+
+// Constructors / Destructor
+template <class T> SinglyLinkedList<T>::SinglyLinkedList() : size(0), headNode(nullptr), tailNode(nullptr) {
 
 }
 
-template <class T>
-void SinglyLinkedList<T>::operator = (const SinglyLinkedList<T>& singlyLinkedList) {
+template <class T> void SinglyLinkedList<T>::operator = (const SinglyLinkedList<T>& singlyLinkedList) {
 	clear();
 
 	SinglyLinkedNode<T>* currentNode = singlyLinkedList.headNode;
@@ -120,26 +161,21 @@ void SinglyLinkedList<T>::operator = (const SinglyLinkedList<T>& singlyLinkedLis
 	}
 }
 
-template <class T>
-SinglyLinkedList<T>::~SinglyLinkedList() {
+template <class T> SinglyLinkedList<T>::~SinglyLinkedList() {
 	clear();
 }
 
 // Getters
-template <class T>
-unsigned int SinglyLinkedList<T>::getSize() {
+template <class T> unsigned int SinglyLinkedList<T>::getSize() {
 	return size;
 }
-template <class T>
-SinglyLinkedNode<T>* SinglyLinkedList<T>::getHeadNode() {
+template <class T> SinglyLinkedNode<T>* SinglyLinkedList<T>::getHeadNode() {
 	return headNode;
 }
-template <class T>
-SinglyLinkedNode<T>* SinglyLinkedList<T>::getTailNode() {
+template <class T> SinglyLinkedNode<T>* SinglyLinkedList<T>::getTailNode() {
 	return tailNode;
 }
-template <class T>
-SinglyLinkedNode<T>* SinglyLinkedList<T>::getNodeAt(unsigned int i) {
+template <class T> SinglyLinkedNode<T>* SinglyLinkedList<T>::getNodeAt(unsigned int i) {
 	if (size == 0 || i >= size)
 		return nullptr;
 
@@ -151,8 +187,7 @@ SinglyLinkedNode<T>* SinglyLinkedList<T>::getNodeAt(unsigned int i) {
 }
 
 // Functions
-template <class T>
-SinglyLinkedNode<T>* SinglyLinkedList<T>::add(T data) {
+template <class T> SinglyLinkedNode<T>* SinglyLinkedList<T>::add(T data) {
 	SinglyLinkedNode<T>* singlyLinkedNode = new SinglyLinkedNode<T>(this, data);
 
 	if (size == 0) {
@@ -168,8 +203,7 @@ SinglyLinkedNode<T>* SinglyLinkedList<T>::add(T data) {
 
 	return singlyLinkedNode;
 }
-template <class T>
-SinglyLinkedNode<T>* SinglyLinkedList<T>::addToHead(T data) {
+template <class T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addToHead(T data) {
 	SinglyLinkedNode<T>* singlyLinkedNode = new SinglyLinkedNode<T>(this, data);
 
 	if (size == 0) {
@@ -185,8 +219,7 @@ SinglyLinkedNode<T>* SinglyLinkedList<T>::addToHead(T data) {
 
 	return singlyLinkedNode;
 }
-template <class T>
-SinglyLinkedNode<T>* SinglyLinkedList<T>::addToTail(T data) {
+template <class T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addToTail(T data) {
 	SinglyLinkedNode<T>* singlyLinkedNode = new SinglyLinkedNode<T>(this, data);
 
 	if (size == 0) {
@@ -202,8 +235,7 @@ SinglyLinkedNode<T>* SinglyLinkedList<T>::addToTail(T data) {
 
 	return singlyLinkedNode;
 }
-template <class T>
-SinglyLinkedNode<T>* SinglyLinkedList<T>::addAt(unsigned int i, T data) {
+template <class T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addAt(unsigned int i, T data) {
 	if (i > size)
 		return nullptr;
 	if (i == size)
@@ -223,8 +255,7 @@ SinglyLinkedNode<T>* SinglyLinkedList<T>::addAt(unsigned int i, T data) {
 
 	return singlyLinkedNode;
 }
-template <class T>
-SinglyLinkedNode<T>* SinglyLinkedList<T>::addNextOf(SinglyLinkedNode<T>* referenceNode, T data) {
+template <class T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addNextOf(SinglyLinkedNode<T>* referenceNode, T data) {
 	if (!contains(referenceNode))
 		return nullptr;
 
@@ -240,129 +271,14 @@ SinglyLinkedNode<T>* SinglyLinkedList<T>::addNextOf(SinglyLinkedNode<T>* referen
 	return singlyLinkedNode;
 }
 
-template <class T>
-void SinglyLinkedList<T>::remove(T data) {
-	if (size == 0)
-		return;
-	if (size == 1) {
-		delete(headNode);
-		headNode = nullptr;
-		tailNode = nullptr;
-		size = 0;
-		return;
-	}
-	if (headNode->data == data) {
-		removeHeadNode();
-		return;
-	}
-	if (tailNode->data == data) {
-		removeTailNode();
-		return;
-	}
-
-	SinglyLinkedNode<T>* currentNode = headNode;
-	while (currentNode != nullptr) {
-		SinglyLinkedNode<T>* nextNode = currentNode->nextNode;
-
-		if (nextNode == nullptr)
-			return;
-
-		if (nextNode->data == data) {
-			currentNode->nextNode = nextNode->nextNode;
-			delete(nextNode);
-			size--;
-			return;
-		}
-
-		currentNode = currentNode->nextNode;
-	}
-}
-template <class T>
-void SinglyLinkedList<T>::removeAt(unsigned int i) {
-	if (size == 0 || i >= size)
-		return;
-	if (i == 0) {
-		removeHeadNode();
-		return;
-	}
-	if (i == size - 1) {
-		removeTailNode();
-		return;
-	}
-
-	SinglyLinkedNode<T>* currentNode = headNode;
-	for (unsigned int j = 0; j < i - 1; j++)
-		currentNode = currentNode->nextNode;
-
-	SinglyLinkedNode<T>* nodeToRemove = currentNode->nextNode;
-	currentNode->nextNode = nodeToRemove->nextNode;
-	delete(nodeToRemove);
-	size--;
-}
-template <class T>
-void SinglyLinkedList<T>::removeNextOf(SinglyLinkedNode<T>* singlyLinkedNode) {
-	if (!contains(singlyLinkedNode) || size == 0 || singlyLinkedNode == tailNode)
-		return;
-
-	if (singlyLinkedNode->nextNode == tailNode)
-		tailNode = singlyLinkedNode;
-
-	singlyLinkedNode->nextNode = singlyLinkedNode->nextNode->nextNode;
-	delete(singlyLinkedNode->nextNode);
-	size--;
-}
-template <class T>
-void SinglyLinkedList<T>::removeHeadNode() {
-	if (size == 0)
-		return;
-	if (size == 1) {
-		delete(headNode);
-		headNode = nullptr;
-		tailNode = nullptr;
-		size = 0;
-		return;
-	}
-	if (size == 2) {
-		delete(headNode);
-		headNode = tailNode;
-		size--;
-		return;
-	}
-
-	SinglyLinkedNode<T>* newHeadNode = headNode->nextNode;
+template <class T> void SinglyLinkedList<T>::removeHeadNode() {
 	delete(headNode);
-	headNode = newHeadNode;
 }
-template <class T>
-void SinglyLinkedList<T>::removeTailNode() {
-	if (size == 0)
-		return;
-	if (size == 0) {
-		delete(tailNode);
-		headNode = nullptr;
-		tailNode = nullptr;
-		size = 0;
-		return;
-	}
-	if (size == 2) {
-		delete(tailNode);
-		tailNode = headNode;
-		size--;
-		return;
-	}
-
-	SinglyLinkedNode<T>* currentNode = headNode;
-	while (currentNode->nextNode->nextNode != nullptr)
-		currentNode = currentNode->nextNode;
-
-	delete(currentNode->nextNode);
-	currentNode->nextNode = nullptr;
-	tailNode = currentNode;
-	size--;
+template <class T> void SinglyLinkedList<T>::removeTailNode() {
+	delete(tailNode);
 }
 
-template <class T>
-bool SinglyLinkedList<T>::contains(T data) {
+template <class T> bool SinglyLinkedList<T>::contains(T data) {
 	SinglyLinkedNode<T>* currentNode = headNode;
 	while (currentNode != nullptr) {
 		if (currentNode->data == data)
@@ -371,8 +287,7 @@ bool SinglyLinkedList<T>::contains(T data) {
 	}
 	return false;
 }
-template <class T>
-bool SinglyLinkedList<T>::contains(SinglyLinkedNode<T>* singlyLinkedNode) {
+template <class T> bool SinglyLinkedList<T>::contains(SinglyLinkedNode<T>* singlyLinkedNode) {
 	if (singlyLinkedNode == nullptr)
 		return false;
 	if (singlyLinkedNode->singlyLinkedList == this)
@@ -380,14 +295,12 @@ bool SinglyLinkedList<T>::contains(SinglyLinkedNode<T>* singlyLinkedNode) {
 	return false;
 }
 
-template <class T>
-void SinglyLinkedList<T>::clear() {
+template <class T> void SinglyLinkedList<T>::clear() {
 	SinglyLinkedNode<T>* currentNode = headNode;
 	while (currentNode != nullptr) {
 		SinglyLinkedNode<T>* nextNode = currentNode->nextNode;
 		delete(currentNode);
 		currentNode = nextNode;
-		size--;
 	}
 	size = 0;
 	headNode = nullptr;
