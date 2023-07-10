@@ -1,8 +1,5 @@
 #pragma once
 
-// Dependencies | std
-#include <iterator>
-
 // Forward declarations | Utility
 template <typename T> class DoublyLinkedNode;
 template <typename T> class DoublyLinkedList;
