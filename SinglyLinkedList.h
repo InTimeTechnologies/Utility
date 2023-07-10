@@ -16,16 +16,18 @@ template <typename T> class SinglyLinkedNode {
 		// Properties
 		SinglyLinkedList<T>* singlyLinkedList;
 		SinglyLinkedNode<T>* nextNode;
-	public:
-		// Properties
-		T data;
 
 		// Constructors / Destructor
 		SinglyLinkedNode();
 		SinglyLinkedNode(T data);
 		SinglyLinkedNode(const SinglyLinkedNode<T>& singlyLinkedNode);
+	public:
+		// Constructor / Destructor
 		void operator = (const SinglyLinkedNode<T>& singlyLinkedNode);
 		~SinglyLinkedNode();
+
+		// Properties
+		T data;
 
 		// Getters
 		SinglyLinkedList<T>* getSinglyLinkedList();
@@ -104,7 +106,7 @@ template <typename T> class SinglyLinkedNodeIterator {
 
 // class SinglyLinkedNode
 
-// Object| public
+// Object| private
 
 // Constructors / Destructor
 template <typename T> SinglyLinkedNode<T>::SinglyLinkedNode() : singlyLinkedList(nullptr), nextNode(nullptr) {
@@ -123,6 +125,10 @@ template <typename T> void SinglyLinkedNode<T>::operator = (const SinglyLinkedNo
 	this->nextNode = singlyLinkedNode.nextNode;
 	this->data = singlyLinkedNode.data;
 }
+
+// Object| public
+
+// Constructors / Destructor
 template <typename T> SinglyLinkedNode<T>::~SinglyLinkedNode() {
 	// If node not attached to a list, return
 	if (singlyLinkedList == nullptr)
