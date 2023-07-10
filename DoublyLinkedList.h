@@ -195,7 +195,8 @@ template <typename T> DoublyLinkedNode<T>* DoublyLinkedNode<T>::setRightNode(T d
 }
 template <typename T> DoublyLinkedNode<T>* DoublyLinkedNode<T>::setLeftNode(T data) {
 	// Link new node to doubly linked node chain
-	DoublyLinkedNode<T>* newNode = new DoublyLinkedNode<T>(doublyLinkedList, data);
+	DoublyLinkedNode<T>* newNode = new DoublyLinkedNode<T>(data);
+	newNode->doublyLinkedList = doublyLinkedList;
 	newNode->leftNode = leftNode;
 	newNode->rightNode = this;
 
@@ -304,6 +305,7 @@ template <typename T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addLeftmostNode(
 		newNode->doublyLinkedList = this;
 		leftmostNode = newNode;
 		rightmostNode = newNode;
+		size++;
 		return newNode;
 	}
 	return leftmostNode->setLeftNode(data);
@@ -314,6 +316,7 @@ template <typename T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addRightmostNode
 		newNode->doublyLinkedList = this;
 		leftmostNode = newNode;
 		rightmostNode = newNode;
+		size++;
 		return newNode;
 	}
 	return rightmostNode->setRightNode(data);
@@ -338,6 +341,7 @@ template <typename T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addAt(unsigned l
 
 	// Add node to list
 	DoublyLinkedNode<T>* newNode = currentNode->setLeftNode(data);
+	size++;
 	
 	// Return new node
 	return newNode;
