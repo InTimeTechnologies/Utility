@@ -7,8 +7,22 @@
 template <typename T> class BinaryRangeNode;
 template <typename T> class BinaryRangeTree;
 
+// class BinaryRangeDirection
+enum class BinaryRangeDirection {
+	LEFT,
+	RIGHT
+};
+
 // class BinaryRangeNode
 template <typename T> class BinaryRangeNode {
+	// Friends
+	friend class BinaryRangeTree<T>;
+
+	// Static
+	public:
+		// Properties
+		static BinaryRangeDirection nodeDirectionAscendsOnDeletion;
+
 	// Object
 	private:
 		// Properties
@@ -26,14 +40,11 @@ template <typename T> class BinaryRangeNode {
 		~BinaryRangeNode();
 
 		// Getters
-		BinaryRangeTree<T>* getBinarySearchTree();
+		BinaryRangeTree<T>* getBinaryRangeTree();
 		BinaryRangeNode<T>* getParentNode();
 		BinaryRangeNode<T>* getLeftNode();
 		BinaryRangeNode<T>* getRightNode();
 		std::pair<T, T> getData();
-
-		// Setters
-		bool setData(std::pair<T, T> data);
 
 		// Functions
 		BinaryRangeNode<T>* getLeftmostNode();
@@ -47,6 +58,9 @@ template <typename T> class BinaryRangeNode {
 
 // class BinaryRangeTree
 template <typename T> class BinaryRangeTree {
+	// Friends
+	friend class BinaryRangeNode<T>;
+
 	// Object
 	private:
 		// Properties
@@ -63,8 +77,6 @@ template <typename T> class BinaryRangeTree {
 
 		// Functions
 		BinaryRangeNode<T>* add(std::pair<T, T> data);
-		BinaryRangeNode<T>* add(T data);
-		BinaryRangeNode<T>* add(BinaryRangeNode<T>* binaryRangeNode);
 		BinaryRangeNode<T>* get(std::pair<T, T> data) const;
 		BinaryRangeNode<T>* get(T data) const;
 		bool has(std::pair<T, T> data) const;
@@ -73,6 +85,11 @@ template <typename T> class BinaryRangeTree {
 };
 
 // class BinaryRangeNode
+
+// Static | public
+
+// Properties
+template <typename T> BinaryRangeDirection BinaryRangeNode<T>::nodeDirectionAscendsOnDeletion = BinaryRangeDirection::LEFT;
 
 // Object | public
 
@@ -90,5 +107,335 @@ template <typename T> void BinaryRangeNode<T>::operator = (const BinaryRangeNode
 	data = binaryRangeNode->data;
 }
 template <typename T> BinaryRangeNode<T>::~BinaryRangeNode() {
+	BinaryRangeNode<T>* ascendingNode = nullptr;
+	// If node to delete does not have a left nor right node, just unlink parent from this
+	if (leftNode == nullptr && rightNode == nullptr) {
+		if (parentNode != nullptr) {
+			if (parentNode->leftNode == this)
+				parentNode->leftNode = nullptr;
+			else
+				parentNode->rightNode = nullptr;
+		}
+	}
+	// If node has a left and a right node, relink accordingly
+	else if (leftNode != nullptr && rightNode != nullptr) {
+		BinaryRangeNode<T>* descendingNode = nullptr;
+		if (nodeDirectionAscendsOnDeletion == BinaryRangeDirection::LEFT) {
+			ascendingNode = leftNode;
+			descendingNode = rightNode;
+		}
+		else {
+			ascendingNode = rightNode;
+			descendingNode = leftNode;
+		}
+		ascendingNode->parentNode = parentNode;
 
+		// Link descendingNode to ascendingNode
+		if (ascendingNode != nullptr && descendingNode != nullptr) {
+			if (nodeDirectionAscendsOnDeletion == BinaryRangeDirection::LEFT) {
+				BinaryRangeNode<T>* upperLinkingNode = ascendingNode->getRightmostNode();
+				if (upperLinkingNode == nullptr)
+					upperLinkingNode = ascendingNode;
+				upperLinkingNode->rightNode = descendingNode;
+			}
+			else {
+				BinaryRangeNode<T>* upperLinkingNode = ascendingNode->getLeftmostNode();
+				if (upperLinkingNode == nullptr)
+					upperLinkingNode = ascendingNode;
+				upperLinkingNode->leftNode = descendingNode;
+			}
+			descendingNode->parentNode = ascendingNode;
+		}
+	}
+
+	// If node only has one node below, relink accordingly
+	else {
+		// Link node below to parentNode
+		if (leftNode == nullptr) // If left node is nullptr, right node is the ascending node
+			ascendingNode = rightNode;
+		else // If right node is nullptr, left node is the ascending node
+			ascendingNode = leftNode;
+		ascendingNode->parentNode = parentNode;
+
+		// Relink parent node to node below
+		if (parentNode != nullptr) {
+			if (parentNode->leftNode == this) // If this node is left node of parent's node, relink parent's left node to ascending node
+				parentNode->leftNode = this;
+			else // If this node is right node of parent's node, relink parent's right node to ascending node
+				parentNode->rightNode = this;
+		}
+	}
+
+	// If this node belongs to a binary tree, decrease its size
+	if (binaryRangeTree != nullptr) {
+		binaryRangeTree->size--;
+		if (binaryRangeTree->size == 0ULL)
+			binaryRangeTree->rootNode = nullptr;
+		else if (ascendingNode != nullptr && ascendingNode->parentNode == nullptr)
+			binaryRangeTree->rootNode = ascendingNode;
+	}
+}
+
+// Getters
+template <typename T> BinaryRangeTree<T>* BinaryRangeNode<T>::getBinaryRangeTree() {
+	return binaryRangeTree;
+}
+template <typename T> BinaryRangeNode<T>* BinaryRangeNode<T>::getParentNode() {
+	return parentNode;
+}
+template <typename T> BinaryRangeNode<T>* BinaryRangeNode<T>::getLeftNode() {
+	return leftNode;
+}
+template <typename T> BinaryRangeNode<T>* BinaryRangeNode<T>::getRightNode() {
+	return rightNode;
+}
+template <typename T> std::pair<T, T> BinaryRangeNode<T>::getData() {
+	return data;
+}
+
+// Functions
+template <typename T> BinaryRangeNode<T>* BinaryRangeNode<T>::getLeftmostNode() {
+	// If left node is nullptr, return nullptr
+	if (leftNode == nullptr)
+		return nullptr;
+
+	// Traverse tree until leftmost node is reached
+	BinaryRangeNode<T>* currentNode = leftNode;
+	while (currentNode->leftNode != nullptr)
+		currentNode = currentNode->leftNode;
+
+	// Return currentNode (leftmost node)
+	return currentNode;
+}
+template <typename T> BinaryRangeNode<T>* BinaryRangeNode<T>::getRightmostNode() {
+	// If right node is nullptr, return nullptr
+	if (rightNode == nullptr)
+		return nullptr;
+
+	// Traverse tree until rightmost node is reached
+	BinaryRangeNode<T>* currentNode = rightNode;
+	while (currentNode->rightNode != nullptr)
+		currentNode = currentNode->rightNode;
+
+	// Return currentNode (rightmost node)
+	return currentNode;
+}
+template <typename T> BinaryRangeNode<T>* BinaryRangeNode<T>::add(std::pair<T, T> data) {
+	// Error check
+	if (parentNode != nullptr)
+		return nullptr;
+
+	// If first is greater than second, swap them to keep data integrity in tree
+	if (data.first > data.second) {
+		T temp = data.first;
+		data.first = data.second;
+		data.second = temp;
+	}
+
+	// Traverse tree and add node to corresponding position
+	BinaryRangeNode<T>* currentNode = this;
+	while (currentNode != nullptr) {
+		// If data overlaps with current node's data, return nullptr to leep data integrity in tree
+		if (data.first >= currentNode->data.first && data.second <= currentNode->data.second)
+			return nullptr;
+
+		// Check if data can extend current node's data to the left direction
+		if (data.first == currentNode->data.first - T(1)) {
+			// Extend current node's data
+			currentNode->data.first = data.first;
+
+			// If left node is not nullptr, check if current node can merge with left node, or left node's rightmost node
+			if (currentNode->leftNode != nullptr) {
+				// Check if current node can merge with left node
+				if (leftNode->data.second + (T)1 == currentNode->data.first) {
+					currentNode->data.first = leftNode->data.first;
+					delete(leftNode);
+					return currentNode;
+				}
+								
+				// Check if current node can merge with left node's rightmost node
+				BinaryRangeNode<T>* leftRightmostNode = currentNode->leftNode->getRightmostNode();
+				if (leftRightmostNode != nullptr) {
+					if ((data.second + (T)1) == leftRightmostNode->data.second) {
+						currentNode->data.first = leftRightmostNode->data.first;
+						delete(leftRightmostNode);
+						return currentNode;
+					}
+				}
+			}
+
+			// Return current node
+			return currentNode;
+		}
+
+		// Check if data can extend current node's data to the right direction
+		else if (data.second == currentNode->data.second + (T)1) {
+			// Extend current node's data
+			currentNode->data.second = data.second;
+
+			// If right node is not nullptr, check if current node can merge with right node, or right node's leftmost node
+			if (currentNode->rightNode != nullptr) {
+				// Check if current node can merge with right node
+				if (rightNode->data.first + (T)1 == currentNode->data.second) {
+					currentNode->data.second = rightNode->data.second;
+					delete(rightNode);
+					return currentNode;
+				}
+
+				// Check if current node can merge with left node's rightmost node
+				BinaryRangeNode<T>* rightLeftmostNode = currentNode->rightNode->getLeftmostNode();
+				if (rightLeftmostNode != nullptr) {
+					currentNode->data.second = rightLeftmostNode->data.second;
+					delete(rightLeftmostNode);
+					return currentNode;
+				}
+			}
+
+			// Return current node
+			return currentNode;
+		}
+
+		// If data is less than current node's data, add or traverse to left node
+		if (data.first < currentNode->data.first) {
+			// If left node is nullptr, add data to the tree as a node
+			if (currentNode->leftNode == nullptr) {
+				BinaryRangeNode<T>* newNode = new BinaryRangeNode<T>(data);
+				newNode->binaryRangeTree = binaryRangeTree;
+				newNode->parentNode = currentNode;
+				currentNode->leftNode = newNode;
+				if (binaryRangeTree != nullptr)
+					binaryRangeTree->size++;
+				return newNode;
+			}
+
+			// Traverse to the left node
+			currentNode = currentNode->leftNode;
+			continue;
+		}
+		// If data is greater than current node's data, add or traverse to right node
+		else if (data.second > currentNode->data.second) {
+			// If right node is nullptr, add data to the tree as node
+			if (currentNode->rightNode == nullptr) {
+				BinaryRangeNode<T>* newNode = new BinaryRangeNode<T>(data);
+				newNode->binaryRangeTree = binaryRangeTree;
+				newNode->parentNode = this;
+				currentNode->rightNode = newNode;
+				if (binaryRangeTree != nullptr)
+					binaryRangeTree->size++;
+				return newNode;
+			}
+
+			// Traverse to the right node
+			currentNode = currentNode->rightNode;
+			continue;
+		}
+
+		// Set currentNode to nullptr to trigger loop break
+		currentNode = nullptr;
+	}
+
+	// Return fail
+	return nullptr;
+}
+template <typename T> BinaryRangeNode<T>* BinaryRangeNode<T>::get(std::pair<T, T> data) {
+	// If there are no nodes to search for, return nullptr
+	if (leftNode == nullptr && rightNode == nullptr)
+		return nullptr;
+
+	// Traverse tree in search of node that was data equal to data provided
+	BinaryRangeNode<T>* currentNode = this;
+	while (currentNode != nullptr) {
+		// If current node's data is equal to data provided, return current node
+		if (currentNode->data == data)
+			return currentNode;
+
+		// Traverse left if less than
+		if (data.first < currentNode->data.first) {
+			currentNode = currentNode->leftNode;
+			continue;
+		}
+		// Traverse right if greater than
+		else if (data.second > currentNode->data.second) {
+			currentNode = currentNode->rightNode;
+			continue;
+		}
+
+		// Set currentNode to nullptr to trigger loop break
+		currentNode = nullptr;
+	}
+
+	// Return fail
+	return nullptr;
+}
+template <typename T> bool BinaryRangeNode<T>::has(std::pair<T, T> data) {
+	BinaryRangeNode<T>* searchResult = get(data);
+	if (searchResult == nullptr)
+		return false;
+	return true;
+}
+template <typename T> bool BinaryRangeNode<T>::remove(std::pair<T, T> data) {
+	BinaryRangeNode<T>* nodeToDelete = get(data);
+	if (nodeToDelete == nullptr)
+		return false;
+	delete(nodeToDelete);
+	return true;
+}
+template <typename T> void BinaryRangeNode<T>::destroy() {
+	delete(this);
+}
+
+// class BinaryRangeTree
+
+// Object | public
+
+// Constructor / Destructor
+template <typename T> BinaryRangeTree<T>::BinaryRangeTree() : size(0ULL), rootNode(nullptr) {
+
+}
+template <typename T> BinaryRangeTree<T>::~BinaryRangeTree() {
+	clear();
+}
+
+// Getters
+template <typename T> unsigned long long BinaryRangeTree<T>::getSize() {
+	return size;
+}
+template <typename T> BinaryRangeNode<T>* BinaryRangeTree<T>::getRootNode() {
+	return rootNode;
+}
+
+// Functions
+template <typename T> BinaryRangeNode<T>* BinaryRangeTree<T>::add(std::pair<T, T> data) {
+	if (size == 0ULL) {
+		BinaryRangeNode<T>* newNode = new BinaryRangeNode<T>(data);
+		newNode->binaryRangeTree = this;
+		rootNode = newNode;
+		size++;
+		return newNode;
+	}
+	return rootNode->add(data);
+}
+template <typename T> BinaryRangeNode<T>* BinaryRangeTree<T>::get(std::pair<T, T> data) const {
+	if (size == 0ULL)
+		return nullptr;
+	return rootNode->get(data);
+}
+template <typename T> BinaryRangeNode<T>* BinaryRangeTree<T>::get(T data) const {
+	if (size == 0ULL)
+		return nullptr;
+	return rootNode->get(data);
+}
+template <typename T> bool BinaryRangeTree<T>::has(std::pair<T, T> data) const {
+	if (size == 0ULL)
+		return false;
+	return rootNode->has(data);
+}
+template <typename T> bool BinaryRangeTree<T>::has(T data) const {
+	if (size == 0ULL)
+		return false;
+	return rootNode->has(data);
+}
+template <typename T> void BinaryRangeTree<T>::clear() {
+	while (size > 0ULL)
+		delete(rootNode);
 }
