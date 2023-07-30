@@ -1,5 +1,8 @@
 #pragma once
 
+// Dependencies | std
+#include <iterator>
+
 // Forward declarations | Utility
 template <typename T> class SinglyLinkedNode;
 template <typename T> class SinglyLinkedList;
