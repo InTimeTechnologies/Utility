@@ -390,12 +390,8 @@ template <typename T> bool BinaryRangeNode<T>::remove(const std::pair<T, T>& dat
 }
 template <typename T> bool BinaryRangeNode<T>::extract(const T& data) {
 	// Error check
-	if (parentNode != nullptr)
+	if (parentNode != nullptr || data.first > data.second)
 		return false;
-
-	// If first is greater than second, swap them to keep data integrity in tree
-	if (data.first > data.second)
-		return nullptr;
 
 	BinaryRangeNode<T>* currentNode = this;
 	while (currentNode != nullptr) {
