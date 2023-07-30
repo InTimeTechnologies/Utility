@@ -80,15 +80,15 @@ template <typename T> class DoublyLinkedList {
 		void clear();                                                                      // O(n)
 
 		// Container functions
-		DoublyLinkedNodeIterator<T> begin();
-		DoublyLinkedNodeIterator<T> end();
+		DoublyLinkedNodeIterator<T> begin() const;
+		DoublyLinkedNodeIterator<T> end() const;
 };
 
 // DoublyLinkedNodeIterator
 template <typename T> class DoublyLinkedNodeIterator {
 	private:
 		// PropertiesS
-		DoublyLinkedNode<T>* currentNode;
+		const DoublyLinkedNode<T>* currentNode;
 
 	public:
 		using iterator_category = std::bidirectional_iterator_tag;
@@ -99,10 +99,12 @@ template <typename T> class DoublyLinkedNodeIterator {
 
 		// Constructor / Destructor
 		DoublyLinkedNodeIterator(DoublyLinkedNode<T>* doublyLinkedNode);
+		DoublyLinkedNodeIterator(const DoublyLinkedNodeIterator<T>& doublyLinkedNodeIterator);
 		~DoublyLinkedNodeIterator();
 
 		// Operators
-		T& operator*() const;
+		DoublyLinkedNodeIterator<T>& operator=(const DoublyLinkedNodeIterator<T>& doublyLinkedNodeIterator);
+		const T& operator*() const;
 		DoublyLinkedNodeIterator<T>& operator++();
 		DoublyLinkedNodeIterator<T> operator++(int);
 		DoublyLinkedNodeIterator<T>& operator--();
@@ -447,10 +449,10 @@ template <typename T> void DoublyLinkedList<T>::clear() {
 }
 
 // Container functions
-template <typename T> DoublyLinkedNodeIterator<T> DoublyLinkedList<T>::begin() {
+template <typename T> DoublyLinkedNodeIterator<T> DoublyLinkedList<T>::begin() const {
 	return DoublyLinkedNodeIterator<T>(leftmostNode);
 }
-template<typename T> DoublyLinkedNodeIterator<T> DoublyLinkedList<T>::end() {
+template<typename T> DoublyLinkedNodeIterator<T> DoublyLinkedList<T>::end() const {
 	return DoublyLinkedNodeIterator<T>(nullptr);
 }
 
@@ -462,12 +464,19 @@ template<typename T> DoublyLinkedNodeIterator<T> DoublyLinkedList<T>::end() {
 template <typename T> DoublyLinkedNodeIterator<T>::DoublyLinkedNodeIterator(DoublyLinkedNode<T>* doublyLinkedNode) : currentNode(doublyLinkedNode) {
 
 }
+template <typename T> DoublyLinkedNodeIterator<T>::DoublyLinkedNodeIterator(const DoublyLinkedNodeIterator<T>& doublyLinkedNodeIterator) : currentNode(doublyLinkedNodeIterator.currentNode) {
+
+}
 template <typename T> DoublyLinkedNodeIterator<T>::~DoublyLinkedNodeIterator() {
 
 }
 
 // Operator overload
-template <typename T> T& DoublyLinkedNodeIterator<T>::operator*() const {
+template <typename T> DoublyLinkedNodeIterator<T>& DoublyLinkedNodeIterator<T>::operator=(const DoublyLinkedNodeIterator<T>& doublyLinkedNodeIterator) {
+	currentNode = doublyLinkedNodeIterator.currentNode;
+	return *this;
+}
+template <typename T> const T& DoublyLinkedNodeIterator<T>::operator*() const {
 	return currentNode->data;
 }
 template <typename T> DoublyLinkedNodeIterator<T>& DoublyLinkedNodeIterator<T>::operator++() {
@@ -484,9 +493,9 @@ template <typename T> DoublyLinkedNodeIterator<T>& DoublyLinkedNodeIterator<T>::
 	return *this;
 }
 template <typename T> DoublyLinkedNodeIterator<T> DoublyLinkedNodeIterator<T>::operator--(int) {
-	DoublyLinkedNodeIterator tmp = *this;
+	DoublyLinkedNodeIterator temp = *this;
 	--(*this);
-	return tmp;
+	return temp;
 }
 template <typename T> bool DoublyLinkedNodeIterator<T>::operator==(const DoublyLinkedNodeIterator<T>& other) const {
 	return currentNode == other.currentNode;
