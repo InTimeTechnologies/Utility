@@ -1,5 +1,8 @@
 #pragma once
 
+// Dependencies | std
+#include <iterator>
+
 // Forward declarations | Utility
 template <typename T> class DoublyLinkedNode;
 template <typename T> class DoublyLinkedList;
@@ -76,6 +79,7 @@ template <typename T> class DoublyLinkedList {
 		bool has(T data) const;                                                            // O(n)
 		void clear();                                                                      // O(n)
 
+		// Container functions
 		DoublyLinkedNodeIterator<T> begin();
 		DoublyLinkedNodeIterator<T> end();
 };
