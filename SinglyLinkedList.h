@@ -1,8 +1,5 @@
 #pragma once
 
-// Dependencies | std
-#include <iterator>
-
 // Forward declarations | Utility
 template <typename T> class SinglyLinkedNode;
 template <typename T> class SinglyLinkedList;
@@ -72,6 +69,7 @@ template <typename T> class SinglyLinkedList {
 
 		void removeFirstNode();                                                     // O(1)
 		void removeLastNode();                                                      // O(1)
+		bool remove(T data);                                                        // O(n)
 
 		bool contains(T data);                                                      // O(n)
 		bool contains(SinglyLinkedNode<T>* singlyLinkedNode);                       // O(1)
@@ -345,6 +343,31 @@ template <typename T> void SinglyLinkedList<T>::removeFirstNode() {
 }
 template <typename T> void SinglyLinkedList<T>::removeLastNode() {
 	delete(lastNode);
+}
+template <typename T> bool SinglyLinkedList<T>::remove(T data) {
+	if (size == 0ULL)
+		return false;
+		
+	SinglyLinkedNode<T>* currentNode = firstNode;
+	SinglyLinkedNode<T>* previousNode = nullptr;
+	while (currentNode != nullptr) {
+		if (currentNode->data == data) {
+			if (previousNode == nullptr)
+				delete(currentNode);
+			else {
+				previousNode->nextNode = currentNode->nextNode;
+				if (currentNode == lastNode)
+					lastNode = previousNode;
+				currentNode->singlyLinkedList = nullptr;
+				delete(currentNode);
+				size--;
+			}
+			return true;
+		}
+
+		previousNode = currentNode;
+		currentNode = currentNode->nextNode;
+	}
 }
 
 template <typename T> bool SinglyLinkedList<T>::contains(T data) {
