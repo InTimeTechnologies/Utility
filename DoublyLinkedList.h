@@ -189,9 +189,14 @@ template <typename T> DoublyLinkedNode<T>* DoublyLinkedNode<T>::setRightNode(T d
 	if (rightNode != nullptr)
 		rightNode->leftNode = newNode;
 
-	// If this is head node
-	if (doublyLinkedList != nullptr && this == doublyLinkedList->rightmostNode)
-		doublyLinkedList->rightmostNode = newNode;
+	// If associated with a list, update list
+	if (doublyLinkedList != nullptr) {
+		doublyLinkedList->size++;
+		if (this == doublyLinkedList->leftmostNode)
+			doublyLinkedList->leftmostNode = newNode;
+		else if (this == doublyLinkedList->rightmostNode)
+			doublyLinkedList->rightmostNode = newNode;
+	}
 
 	// Return new node
 	return newNode;
@@ -209,9 +214,14 @@ template <typename T> DoublyLinkedNode<T>* DoublyLinkedNode<T>::setLeftNode(T da
 	if (leftNode != nullptr)
 		leftNode->rightNode = leftNode;
 
-	// If this is tail node
-	if (doublyLinkedList != nullptr && this == doublyLinkedList->rightmostNode)
-		doublyLinkedList->tailNode = newNode;
+	// If associated with a list, update list
+	if (doublyLinkedList != nullptr) {
+		doublyLinkedList->size++;
+		if (this == doublyLinkedList->leftmostNode)
+			doublyLinkedList->leftmostNode = newNode;
+		else if (this == doublyLinkedList->rightmostNode)
+			doublyLinkedList->rightmostNode = newNode;
+	}
 
 	// Return new node
 	return newNode;
@@ -311,7 +321,13 @@ template <typename T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addLeftmostNode(
 		size++;
 		return newNode;
 	}
-	return leftmostNode->setLeftNode(data);
+
+	DoublyLinkedNode<T>* newNode = new DoublyLinkedNode<T>();
+	newNode->doublyLinkedList = this;
+	leftmostNode->leftNode = newNode;
+	leftmostNode = newNode;
+	size++;
+	return newNode;
 }
 template <typename T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addRightmostNode(T data) {
 	if (size == 0ULL) {
@@ -322,7 +338,13 @@ template <typename T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addRightmostNode
 		size++;
 		return newNode;
 	}
-	return rightmostNode->setRightNode(data);
+
+	DoublyLinkedNode<T>* newNode = new DoublyLinkedNode<T>(data);
+	newNode->doublyLinkedList = this;
+	rightmostNode->rightNode = newNode;
+	rightmostNode = newNode;
+	size++;
+	return newNode;
 }
 template <typename T> DoublyLinkedNode<T>* DoublyLinkedList<T>::addAt(unsigned long long i, T data) {
 	// Error check
