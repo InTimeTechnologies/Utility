@@ -150,6 +150,13 @@ template <typename T> SinglyLinkedNode<T>::~SinglyLinkedNode() {
 		return;
 	}
 
+	// If this node is the first node
+	if (this == singlyLinkedList->firstNode) {
+		singlyLinkedList->firstNode = nextNode;
+		singlyLinkedList->size--;
+		return;
+	}
+
 	// Search for node to remove
 	SinglyLinkedNode<T>* previousNode = nullptr;
 	SinglyLinkedNode<T>* currentNode = singlyLinkedList->getFirstNode();
@@ -160,9 +167,7 @@ template <typename T> SinglyLinkedNode<T>::~SinglyLinkedNode() {
 			if (previousNode != nullptr)
 				previousNode->nextNode = currentNode->nextNode;
 			
-			// If node is last or first node, update list
-			if (singlyLinkedList->firstNode == this)
-				singlyLinkedList->firstNode = currentNode->nextNode;
+			// If node is last node, update list
 			if (singlyLinkedList->lastNode == this)
 				singlyLinkedList->lastNode = previousNode;
 
@@ -342,9 +347,19 @@ template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addNextOf(Singly
 }
 
 template <typename T> void SinglyLinkedList<T>::removeFirstNode() {
-	delete(firstNode);
+	if (size == 0ULL)
+		return;
+
+	SinglyLinkedNode<T>* nodeToDelete = firstNode;
+	firstNode->singlyLinkedList = nullptr;
+	firstNode = firstNode->nextNode;
+
+	delete(nodeToDelete);
 }
 template <typename T> void SinglyLinkedList<T>::removeLastNode() {
+	if (size == 0ULL)
+		return;
+
 	delete(lastNode);
 }
 template <typename T> bool SinglyLinkedList<T>::remove(T data) {
