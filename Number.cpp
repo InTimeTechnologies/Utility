@@ -159,6 +159,8 @@ bool Number::setValue(const std::string& string) {
 	// Decimal number part
 	if (decimalDigitCount > 0)
 		formattedText += stringBuild.substr((size_t)(wholeDigitCount + 1), (size_t)decimalDigitCount);
+	else
+		formattedText += "0";
 
 	// Update properties
 	if (isNegative)
