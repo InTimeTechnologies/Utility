@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Range.h"
-
 // Forward declarations
 class RangeBSTNode;
 class RangeBST;
