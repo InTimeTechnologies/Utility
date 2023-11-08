@@ -135,7 +135,7 @@ template <typename T> DoublyLinkedNode<T>::~DoublyLinkedNode() {
 	if (doublyLinkedList == nullptr || doublyLinkedList->size == 0ULL)
 		return;
 
-	// If this is the last node in the list, reset list
+	// If this is the rightmost node in the list, reset list
 	if (doublyLinkedList->size == 1ULL) {
 		doublyLinkedList->size = 0ULL;
 		doublyLinkedList->leftmostNode = nullptr;

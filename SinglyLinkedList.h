@@ -49,8 +49,8 @@ template <typename T> class SinglyLinkedList {
 	private:
 		// Properties
 		unsigned long long size;
-		SinglyLinkedNode<T>* firstNode;
-		SinglyLinkedNode<T>* lastNode;
+		SinglyLinkedNode<T>* leftNode;
+		SinglyLinkedNode<T>* rightNode;
 	public:
 		// Constructors / Destructor
 		SinglyLinkedList();                                                         // O(1)
@@ -59,19 +59,19 @@ template <typename T> class SinglyLinkedList {
 
 		// Getters
 		unsigned long long getSize();                                               // O(1)
-		SinglyLinkedNode<T>* getFirstNode();                                        // O(1)
-		SinglyLinkedNode<T>* getLastNode();                                         // O(1)
+		SinglyLinkedNode<T>* getLeftmostNode();                                     // O(1)
+		SinglyLinkedNode<T>* getRightmostNode();                                    // O(1)
 		SinglyLinkedNode<T>* getNodeAt(unsigned long long i);                       // O(n)
 
 		// Functions
 		SinglyLinkedNode<T>* add(T data);                                           // O(1)
-		SinglyLinkedNode<T>* addFirstNode(T data);                                  // O(1)
-		SinglyLinkedNode<T>* addLastNode(T data);                                   // O(1)
+		SinglyLinkedNode<T>* addLeftmostNode(T data);                               // O(1)
+		SinglyLinkedNode<T>* addRightmostNode(T data);                              // O(1)
 		SinglyLinkedNode<T>* addAt(unsigned long long i, T data);                   // O(n)
 		SinglyLinkedNode<T>* addNextOf(SinglyLinkedNode<T>* referenceNode, T data); // O(1)
 
-		void removeFirstNode();                                                     // O(1)
-		void removeLastNode();                                                      // O(1)
+		void removeLeftmostNode();                                                  // O(1)
+		void removeRightmostNode();                                                 // O(1)
 		bool remove(T data);                                                        // O(n)
 
 		bool contains(T data);                                                      // O(n)
@@ -145,21 +145,21 @@ template <typename T> SinglyLinkedNode<T>::~SinglyLinkedNode() {
 	// If there is only one node in the list, reset list
 	if (singlyLinkedList->getSize() == 1ULL) {
 		singlyLinkedList->size = 0ULL;
-		singlyLinkedList->firstNode = nullptr;
-		singlyLinkedList->lastNode = nullptr;
+		singlyLinkedList->leftNode = nullptr;
+		singlyLinkedList->rightNode = nullptr;
 		return;
 	}
 
-	// If this node is the first node
-	if (this == singlyLinkedList->firstNode) {
-		singlyLinkedList->firstNode = nextNode;
+	// If this node is the left node
+	if (this == singlyLinkedList->leftNode) {
+		singlyLinkedList->leftNode = nextNode;
 		singlyLinkedList->size--;
 		return;
 	}
 
 	// Search for node to remove
 	SinglyLinkedNode<T>* previousNode = nullptr;
-	SinglyLinkedNode<T>* currentNode = singlyLinkedList->getFirstNode();
+	SinglyLinkedNode<T>* currentNode = singlyLinkedList->getLeftmostNode();
 	while (currentNode != nullptr) {
 		// If node to remove found
 		if (currentNode == this) {
@@ -167,9 +167,9 @@ template <typename T> SinglyLinkedNode<T>::~SinglyLinkedNode() {
 			if (previousNode != nullptr)
 				previousNode->nextNode = currentNode->nextNode;
 			
-			// If node is last node, update list
-			if (singlyLinkedList->lastNode == this)
-				singlyLinkedList->lastNode = previousNode;
+			// If node is right node, update list
+			if (singlyLinkedList->rightNode == this)
+				singlyLinkedList->rightNode = previousNode;
 
 			// Update list's size
 			singlyLinkedList->size--;
@@ -200,8 +200,8 @@ template <typename T> SinglyLinkedNode<T>* SinglyLinkedNode<T>::addNextNode(T da
 	nextNode = newNode;
 
 	if (singlyLinkedList != nullptr) {
-		if (this == singlyLinkedList->lastNode)
-			singlyLinkedList->lastNode = newNode;
+		if (this == singlyLinkedList->rightNode)
+			singlyLinkedList->rightNode = newNode;
 		singlyLinkedList->size++;
 	}
 
@@ -213,20 +213,20 @@ template <typename T> SinglyLinkedNode<T>* SinglyLinkedNode<T>::addNextNode(T da
 // Object | public
 
 // Constructors / Destructor
-template <typename T> SinglyLinkedList<T>::SinglyLinkedList() : size(0ULL), firstNode(nullptr), lastNode(nullptr) {
+template <typename T> SinglyLinkedList<T>::SinglyLinkedList() : size(0ULL), leftNode(nullptr), rightNode(nullptr) {
 
 }
 
 template <typename T> void SinglyLinkedList<T>::operator = (const SinglyLinkedList<T>& singlyLinkedList) {
 	clear();
 
-	SinglyLinkedNode<T>* currentNode = singlyLinkedList.firstNode;
+	SinglyLinkedNode<T>* currentNode = singlyLinkedList.leftNode;
 	if (currentNode != nullptr)
 		return;
 
 	// Deep copy
 	while (currentNode != nullptr) {
-		addLastNode(currentNode->data);
+		addRightmostNode(currentNode->data);
 		currentNode = currentNode->nextNode;
 	}
 }
@@ -239,17 +239,17 @@ template <typename T> SinglyLinkedList<T>::~SinglyLinkedList() {
 template <typename T> unsigned long long SinglyLinkedList<T>::getSize() {
 	return size;
 }
-template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::getFirstNode() {
-	return firstNode;
+template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::getLeftmostNode() {
+	return leftNode;
 }
-template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::getLastNode() {
-	return lastNode;
+template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::getRightmostNode() {
+	return rightNode;
 }
 template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::getNodeAt(unsigned long long i) {
 	if (size == 0ULL || i >= size)
 		return nullptr;
 
-	SinglyLinkedNode<T>* currentNode = firstNode;
+	SinglyLinkedNode<T>* currentNode = leftNode;
 	for (unsigned long long j = 0ULL; j != i; j++)
 		currentNode = currentNode->nextNode;
 
@@ -262,49 +262,49 @@ template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::add(T data) {
 	newNode->singlyLinkedList = this;
 
 	if (size == 0ULL) {
-		firstNode = newNode;
-		lastNode = newNode;
+		leftNode = newNode;
+		rightNode = newNode;
 		size++;
 		return newNode;
 	}
 
 	size++;
-	lastNode->nextNode = newNode;
-	lastNode = newNode;
+	rightNode->nextNode = newNode;
+	rightNode = newNode;
 
 	return newNode;
 }
-template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addFirstNode(T data) {
+template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addLeftmostNode(T data) {
 	SinglyLinkedNode<T>* newNode = new SinglyLinkedNode<T>( data);
 	newNode->singlyLinkedList = this;
 
 	if (size == 0ULL) {
 		size++;
-		firstNode = newNode;
-		lastNode = newNode;
+		leftNode = newNode;
+		rightNode = newNode;
 		return newNode;
 	}
 
 	size++;
-	newNode->nextNode = firstNode;
-	firstNode = newNode;
+	newNode->nextNode = leftNode;
+	leftNode = newNode;
 
 	return newNode;
 }
-template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addLastNode(T data) {
+template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addRightmostNode(T data) {
 	SinglyLinkedNode<T>* newNode = new SinglyLinkedNode<T>(data);
 	newNode->singlyLinkedList = this;
 
 	if (size == 0ULL) {
 		size++;
-		firstNode = newNode;
-		lastNode = newNode;
+		leftNode = newNode;
+		rightNode = newNode;
 		return newNode;
 	}
 
 	size++;
-	lastNode->nextNode = newNode;
-	lastNode = newNode;
+	rightNode->nextNode = newNode;
+	rightNode = newNode;
 
 	return newNode;
 }
@@ -312,11 +312,11 @@ template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addAt(unsigned l
 	if (i > size)
 		return nullptr;
 	if (i == size)
-		return addLastNode(data);
+		return addRightmostNode(data);
 	if (i == 0ULL)
-		return addFirstNode(data);
+		return addLeftmostNode(data);
 
-	SinglyLinkedNode<T>* currentNode = firstNode;
+	SinglyLinkedNode<T>* currentNode = leftNode;
 	for (unsigned long long j = 0ULL; j != i - 1ULL; j++)
 		currentNode = currentNode->nextNode;
 
@@ -336,8 +336,8 @@ template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addNextOf(Singly
 	SinglyLinkedNode<T>* newNode = new SinglyLinkedNode<T>(data);
 	newNode->singlyLinkedList = this;
 
-	if (referenceNode == lastNode)
-		lastNode = newNode;
+	if (referenceNode == rightNode)
+		rightNode = newNode;
 
 	newNode->nextNode = referenceNode->nextNode;
 	referenceNode->nextNode = newNode;
@@ -346,27 +346,27 @@ template <typename T> SinglyLinkedNode<T>* SinglyLinkedList<T>::addNextOf(Singly
 	return newNode;
 }
 
-template <typename T> void SinglyLinkedList<T>::removeFirstNode() {
+template <typename T> void SinglyLinkedList<T>::removeLeftmostNode() {
 	if (size == 0ULL)
 		return;
 
-	SinglyLinkedNode<T>* nodeToDelete = firstNode;
-	firstNode->singlyLinkedList = nullptr;
-	firstNode = firstNode->nextNode;
+	SinglyLinkedNode<T>* nodeToDelete = leftNode;
+	leftNode->singlyLinkedList = nullptr;
+	leftNode = leftNode->nextNode;
 
 	delete(nodeToDelete);
 }
-template <typename T> void SinglyLinkedList<T>::removeLastNode() {
+template <typename T> void SinglyLinkedList<T>::removeRightmostNode() {
 	if (size == 0ULL)
 		return;
 
-	delete(lastNode);
+	delete(rightNode);
 }
 template <typename T> bool SinglyLinkedList<T>::remove(T data) {
 	if (size == 0ULL)
 		return false;
 		
-	SinglyLinkedNode<T>* currentNode = firstNode;
+	SinglyLinkedNode<T>* currentNode = leftNode;
 	SinglyLinkedNode<T>* previousNode = nullptr;
 	while (currentNode != nullptr) {
 		if (currentNode->data == data) {
@@ -374,8 +374,8 @@ template <typename T> bool SinglyLinkedList<T>::remove(T data) {
 				delete(currentNode);
 			else {
 				previousNode->nextNode = currentNode->nextNode;
-				if (currentNode == lastNode)
-					lastNode = previousNode;
+				if (currentNode == rightNode)
+					rightNode = previousNode;
 				currentNode->singlyLinkedList = nullptr;
 				delete(currentNode);
 				size--;
@@ -389,7 +389,7 @@ template <typename T> bool SinglyLinkedList<T>::remove(T data) {
 }
 
 template <typename T> bool SinglyLinkedList<T>::contains(T data) {
-	SinglyLinkedNode<T>* currentNode = firstNode;
+	SinglyLinkedNode<T>* currentNode = leftNode;
 	while (currentNode != nullptr) {
 		if (currentNode->data == data)
 			return true;
@@ -406,20 +406,20 @@ template <typename T> bool SinglyLinkedList<T>::contains(SinglyLinkedNode<T>* si
 }
 
 template <typename T> void SinglyLinkedList<T>::clear() {
-	SinglyLinkedNode<T>* currentNode = firstNode;
+	SinglyLinkedNode<T>* currentNode = leftNode;
 	while (currentNode != nullptr) {
 		SinglyLinkedNode<T>* nextNode = currentNode->nextNode;
 		delete(currentNode);
 		currentNode = nextNode;
 	}
 	size = 0ULL;
-	firstNode = nullptr;
-	lastNode = nullptr;
+	leftNode = nullptr;
+	rightNode = nullptr;
 }
 
 // Container functions
 template <typename T> SinglyLinkedNodeIterator<T> SinglyLinkedList<T>::begin() {
-	return SinglyLinkedNodeIterator<T>(firstNode);
+	return SinglyLinkedNodeIterator<T>(leftNode);
 }
 template<typename T> SinglyLinkedNodeIterator<T> SinglyLinkedList<T>::end() {
 	return SinglyLinkedNodeIterator<T>(nullptr);

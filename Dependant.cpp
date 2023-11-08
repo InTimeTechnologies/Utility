@@ -16,8 +16,7 @@ Dependant::~Dependant() {
 		return;
 	
 	// Remove node from provider's list
-	DoublyLinkedList<Dependant*>* doublyLinkedList = dependantNode->doublyLinkedList;
-	doublyLinkedList->remove(dependantNode);
+	delete(dependantNode);
 	dependantNode = nullptr;
 }
 
@@ -35,8 +34,7 @@ void Dependant::setProvider(Provider* provider) {
 	this->provider = provider;
 	if (provider == nullptr) {
 		if (dependantNode != nullptr) {
-			DoublyLinkedList<Dependant*>* dependantList = dependantNode->doublyLinkedList;
-			dependantList->remove(dependantNode);
+			delete(dependantNode);
 			dependantNode = nullptr;
 			if (dependantInterface != nullptr)
 				dependantInterface->onProviderUnset();
@@ -45,7 +43,7 @@ void Dependant::setProvider(Provider* provider) {
 	}
 
 	// Add to provider's list of dependants
-	dependantNode = provider->dependants.addToTail(this);
+	dependantNode = provider->dependants.addRightmostNode(this);
 	if (dependantInterface != nullptr)
 		dependantInterface->onProviderSet();
 }

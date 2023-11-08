@@ -21,12 +21,12 @@ Provider::~Provider() {
 // Getters
 std::vector<Dependant*> Provider::getDependants() {
 	std::vector<Dependant*> dependants = std::vector<Dependant*>(this->dependants.getSize());
-	DoublyLinkedNode<Dependant*>* currentNode = this->dependants.getHeadNode();
+	DoublyLinkedNode<Dependant*>* currentNode = this->dependants.getLeftmostNode();
 	for (unsigned int i = 0U; currentNode != nullptr; i++) {
 		Dependant* dependant = currentNode->data;
 		dependants[i] = dependant;
 
-		currentNode = currentNode->nextNode;
+		currentNode = currentNode->getRightNode();
 	}
 	return dependants;
 }
@@ -34,7 +34,7 @@ std::vector<Dependant*> Provider::getDependants() {
 // Functions
 void Provider::clearDependants() {
 	while (dependants.getSize() > 0) {
-		DoublyLinkedNode<Dependant*>* dependantNode = dependants.getHeadNode();
+		DoublyLinkedNode<Dependant*>* dependantNode = dependants.getLeftmostNode();
 		Dependant* dependant = dependantNode->data;
 		dependant->setProvider(nullptr);
 	}
