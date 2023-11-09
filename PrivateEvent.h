@@ -8,19 +8,13 @@
 #include <utility/DoublyLinkedList.h>
 
 // Forward declarations | PrivateEvent
-class PrivateEvent;
 class EventListener;
 class EventDispatcher;
 
-class PrivateEvent {
-	// Object
-	public:
-		// Constructor / Destructor
-		PrivateEvent();
-		~PrivateEvent();
-};
-
 class EventListener {
+	// Friends
+	friend class EventDispatcher;
+	
 	// Object
 	private:
 		// Properties
@@ -28,6 +22,9 @@ class EventListener {
 		EventDispatcher* eventDispatcher;
 
 	public:
+		// Properties
+		std::function<void(EventListener* eventListener, void* eventData)> function;
+
 		// Constructor / Destructor
 		EventListener();
 		~EventListener();
@@ -36,7 +33,7 @@ class EventListener {
 		void disconnect();
 		
 		// Virtual functions
-		virtual void respondToEvent(const PrivateEvent& privateEvent);
+		virtual void respondToEvent(void* eventData);
 };
 
 class EventDispatcher {
@@ -57,7 +54,5 @@ class EventDispatcher {
 		// Functions
 		void connect(EventListener& eventListener);
 		void connect(EventListener* eventListener);
-		
-		// Virtual functions
-		virtual void dispatch();
+		void dispatch(void* eventData);
 };

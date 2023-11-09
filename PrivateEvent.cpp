@@ -1,17 +1,5 @@
 #include "PrivateEvent.h"
 
-// class PrivateEvent
-
-// Object | public
-
-// Constructor / Destructor
-PrivateEvent::PrivateEvent() {
-
-}
-PrivateEvent::~PrivateEvent() {
-
-}
-
 // class EventListener
 
 // Object | public
@@ -43,8 +31,8 @@ void EventListener::disconnect() {
 }
 
 // Virtual functions
-void EventListener::respondToEvent(const PrivateEvent& privateEvent) {
-	// To be implemented in child classes
+void EventListener::respondToEvent(void* eventData) {
+	function(this, eventData);
 }
 
 // class EventDispatcher
@@ -66,6 +54,7 @@ void EventDispatcher::connect(EventListener& eventListener) {
 
 	// Ass event listener to the list of event listeners
 	eventListeners.push_back(&eventListener);
+	eventListener.eventDispatcher = this;
 }
 void EventDispatcher::connect(EventListener* eventListener) {
 	// If eventListener is nullptr, return
@@ -77,12 +66,10 @@ void EventDispatcher::connect(EventListener* eventListener) {
 
 	// Ass event listener to the list of event listeners
 	eventListeners.push_back(eventListener);
+	eventListener->eventDispatcher = this;
 }
-
-// Virtual functions
-void EventDispatcher::dispatch() {
-	// To be implemented by child classes
-	const PrivateEvent privateEvent;
+void EventDispatcher::dispatch(void* eventData) {
+	// Dispatch event to each event listener in list of event listeners
 	for (EventListener* eventListener : eventListeners)
-		eventListener->respondToEvent(privateEvent);
+		eventListener->respondToEvent(eventData);
 }
