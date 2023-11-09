@@ -1,7 +1,16 @@
 #include "PrivateEvent.h"
 
-// Test
-#include <iostream>
+// class PrivateEvent
+
+// Object | public
+
+// Constructor / Destructor
+PrivateEvent::PrivateEvent() {
+
+}
+PrivateEvent::~PrivateEvent() {
+
+}
 
 // class EventListener
 
@@ -36,7 +45,6 @@ void EventListener::disconnect() {
 // Virtual functions
 void EventListener::respondToEvent(const PrivateEvent& privateEvent) {
 	// To be implemented in child classes
-	std::cout << "Response" << std::endl;
 }
 
 // class EventDispatcher

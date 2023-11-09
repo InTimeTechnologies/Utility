@@ -13,7 +13,11 @@ class EventListener;
 class EventDispatcher;
 
 class PrivateEvent {
-	
+	// Object
+	public:
+		// Constructor / Destructor
+		PrivateEvent();
+		~PrivateEvent();
 };
 
 class EventListener {
