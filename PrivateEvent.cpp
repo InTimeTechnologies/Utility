@@ -12,6 +12,14 @@ EventListener::~EventListener() {
 	disconnect();
 }
 
+// Getters
+void* EventListener::getReceiver() {
+	return receiver;
+}
+EventDispatcher* EventListener::getEventDispatcher() {
+	return eventDispatcher;
+}
+
 // Functions
 void EventListener::disconnect() {
 	// If event listener is not connected to an event dispatcher, return
@@ -40,14 +48,30 @@ void EventListener::respondToEvent(void* eventData) {
 // Object | public
 
 // Constructor / Destructor
-EventDispatcher::EventDispatcher() : sender(nullptr), eventListeners(std::vector<EventListener*>()) {
+EventDispatcher::EventDispatcher() : EventDispatcher(nullptr) {
+
+}
+EventDispatcher::EventDispatcher(void* sender) : sender(sender), eventListeners(std::vector<EventListener*>()) {
 
 }
 EventDispatcher::~EventDispatcher() {
 
 }
 
+// Getters
+void* EventDispatcher::getSender() {
+	return sender;
+}
+std::vector<EventListener*> EventDispatcher::getEventListeners() {
+	return eventListeners;
+}
+
 // Function
+void EventDispatcher::clearEventListeners() {
+	for (EventListener* eventListener : eventListeners)
+		eventListener->eventDispatcher;
+	eventListeners.clear();
+}
 void EventDispatcher::connect(EventListener& eventListener) {
 	// Disconnect from any connection their might be with other event dispatchers
 	eventListener.disconnect();

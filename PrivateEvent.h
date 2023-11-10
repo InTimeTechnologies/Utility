@@ -29,6 +29,10 @@ class EventListener {
 		EventListener();
 		~EventListener();
 
+		// Getters
+		void* getReceiver();
+		EventDispatcher* getEventDispatcher();
+
 		// Function
 		void disconnect();
 		
@@ -49,9 +53,15 @@ class EventDispatcher {
 	public:
 		// Constructor / Destructor
 		EventDispatcher();
+		EventDispatcher(void* sender);
 		~EventDispatcher();
 
+		// Getters
+		void* getSender();
+		std::vector<EventListener*> getEventListeners();
+
 		// Functions
+		void clearEventListeners();
 		void connect(EventListener& eventListener);
 		void connect(EventListener* eventListener);
 		void dispatch(void* eventData);
