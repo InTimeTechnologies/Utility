@@ -386,6 +386,8 @@ template <typename T> bool SinglyLinkedList<T>::remove(T data) {
 		previousNode = currentNode;
 		currentNode = currentNode->nextNode;
 	}
+
+	return false;
 }
 
 template <typename T> bool SinglyLinkedList<T>::contains(T data) {
