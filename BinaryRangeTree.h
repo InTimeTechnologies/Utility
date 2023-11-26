@@ -66,7 +66,7 @@ template <typename T> class BinaryRangeTree {
 	// Object
 	private:
 		// Properties
-		unsigned long long size;
+		int size;
 		BinaryRangeNode<T>* rootNode;
 	public:
 		// Constructor / Destructor
@@ -74,7 +74,7 @@ template <typename T> class BinaryRangeTree {
 		~BinaryRangeTree();
 
 		// Getters
-		unsigned long long getSize() const;
+		int getSize() const;
 		BinaryRangeNode<T>* getRootNode() const;
 
 		// Functions
@@ -503,7 +503,7 @@ template <typename T> BinaryRangeTree<T>::~BinaryRangeTree() {
 }
 
 // Getters
-template <typename T> unsigned long long BinaryRangeTree<T>::getSize() const {
+template <typename T> int BinaryRangeTree<T>::getSize() const {
 	return size;
 }
 template <typename T> BinaryRangeNode<T>* BinaryRangeTree<T>::getRootNode() const {
