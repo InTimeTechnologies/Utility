@@ -18,7 +18,7 @@ class EventListener {
 	// Object
 	private:
 		// Properties
-		void* receiver;
+		void* owner;
 		EventDispatcher* eventDispatcher;
 
 	public:
@@ -27,13 +27,15 @@ class EventListener {
 
 		// Constructor / Destructor
 		EventListener();
+		EventListener(void* owner);
 		~EventListener();
 
 		// Getters
-		void* getReceiver();
+		void* getOwner();
 		EventDispatcher* getEventDispatcher();
 
 		// Function
+		void connect(EventDispatcher& eventDispatcher);
 		void disconnect();
 		
 		// Virtual functions
@@ -63,6 +65,6 @@ class EventDispatcher {
 		// Functions
 		void clearEventListeners();
 		void connect(EventListener& eventListener);
-		void connect(EventListener* eventListener);
+		void disconnectAll();
 		void dispatch(void* eventData);
 };
