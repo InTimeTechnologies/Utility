@@ -5,7 +5,10 @@
 // Object | public
 
 // Constructor / Destructor
-EventListener::EventListener() : receiver(nullptr), eventDispatcher(nullptr) {
+EventListener::EventListener() : EventListener(nullptr) {
+
+}
+EventListener::EventListener(void* owner) : owner(owner), eventDispatcher(nullptr) {
 
 }
 EventListener::~EventListener() {
@@ -13,14 +16,19 @@ EventListener::~EventListener() {
 }
 
 // Getters
-void* EventListener::getReceiver() {
-	return receiver;
+void* EventListener::getOwner() {
+	return owner;
 }
 EventDispatcher* EventListener::getEventDispatcher() {
 	return eventDispatcher;
 }
 
 // Functions
+void EventListener::connect(EventDispatcher& eventDispatcher) {
+	disconnect();
+	this->eventDispatcher = &eventDispatcher;
+	eventDispatcher.eventListeners.push_back(this);
+}
 void EventListener::disconnect() {
 	// If event listener is not connected to an event dispatcher, return
 	if (eventDispatcher == nullptr)
@@ -80,17 +88,11 @@ void EventDispatcher::connect(EventListener& eventListener) {
 	eventListeners.push_back(&eventListener);
 	eventListener.eventDispatcher = this;
 }
-void EventDispatcher::connect(EventListener* eventListener) {
-	// If eventListener is nullptr, return
-	if (eventListener == nullptr)
-		return;
-
-	// Disconnect from any connection their might be with other event dispatchers
-	eventListener->disconnect();
-
-	// Ass event listener to the list of event listeners
-	eventListeners.push_back(eventListener);
-	eventListener->eventDispatcher = this;
+void EventDispatcher::disconnectAll() {
+	// Remove every event listener listening to this event dispatcher
+	for (EventListener* eventListener : eventListeners)
+		eventListener->eventDispatcher = nullptr;
+	eventListeners.clear();
 }
 void EventDispatcher::dispatch(void* eventData) {
 	// Dispatch event to each event listener in list of event listeners
