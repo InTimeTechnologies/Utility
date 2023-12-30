@@ -3,11 +3,16 @@
 // Dependencies | std
 #include <utility>
 
+// Forward declarations | utility
+class IdNode;
+class IdMap;
+
 class IdNode {
 	// Object
 	public:
 		// Properties
 		std::pair<int, int> m_idRange = std::pair<int, int>(0, 0);
+		IdMap* owner = nullptr;
 		IdNode* m_up = nullptr;
 		IdNode* m_left = nullptr;
 		IdNode* m_right = nullptr;
@@ -24,11 +29,12 @@ class IdNode {
 
 class IdMap {
 	// Object
-	public:
+	private:
 		// Properties
 		IdNode* m_rootNode = nullptr;
 		int m_size = 0;
 
+	public:
 		// Constructor / Destructor
 		IdMap();
 		~IdMap();
@@ -41,7 +47,9 @@ class IdMap {
 		bool addId(int id);
 		bool addId(std::pair<int, int> idRange);
 		bool removeId(int id);
-		void removeNode(IdNode* idNode);
+		bool removeNode(IdNode* idNode);
+		int extractLeast();
+		int extractGreatest();
 		void clear();
 		IdNode* getNode(int id) const;
 		bool has(int id) const;

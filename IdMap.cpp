@@ -70,6 +70,7 @@ bool IdMap::addId(int id) {
 	if (m_rootNode == nullptr) {
 		IdNode* newNode = new IdNode;
 		newNode->m_idRange = std::pair<int, int>(id, id);
+		newNode->owner = this;
 
 		m_rootNode = newNode;
 		m_size = 1;
@@ -155,6 +156,7 @@ bool IdMap::addId(int id) {
 			if (currentNode->m_left == nullptr) {
 				IdNode* newNode = new IdNode;
 				newNode->m_idRange = std::pair(id, id);
+				newNode->owner = this;
 				newNode->m_up = currentNode;
 				currentNode->m_left = newNode;
 				m_size++;
@@ -172,6 +174,7 @@ bool IdMap::addId(int id) {
 			if (currentNode->m_right == nullptr) {
 				IdNode* newNode = new IdNode;
 				newNode->m_idRange = std::pair<int, int>(id, id);
+				newNode->owner = this;
 				newNode->m_up = currentNode;
 				currentNode->m_right = newNode;
 				m_size++;
@@ -188,7 +191,7 @@ bool IdMap::addId(int id) {
 	return false;
 }
 bool IdMap::addId(std::pair<int, int> idRange) {
-	if (idRange.first < idRange.second) {
+	if (idRange.first > idRange.second) {
 		int temp = idRange.first;
 		idRange.first = idRange.second;
 		idRange.second = temp;
@@ -197,6 +200,7 @@ bool IdMap::addId(std::pair<int, int> idRange) {
 	// If tree is empty, add id as the root node
 	if (m_rootNode == nullptr) {
 		IdNode* newNode = new IdNode;
+		newNode->owner = this;
 		newNode->m_idRange = idRange;
 
 		m_rootNode = newNode;
@@ -285,6 +289,7 @@ bool IdMap::addId(std::pair<int, int> idRange) {
 			if (currentNode->m_left == nullptr) {
 				IdNode* newNode = new IdNode;
 				newNode->m_idRange = idRange;
+				newNode->owner = this;
 				newNode->m_up = currentNode;
 				currentNode->m_left = newNode;
 				m_size++;
@@ -302,6 +307,7 @@ bool IdMap::addId(std::pair<int, int> idRange) {
 			if (currentNode->m_right == nullptr) {
 				IdNode* newNode = new IdNode;
 				newNode->m_idRange = idRange;
+				newNode->owner = this;
 				newNode->m_up = currentNode;
 				currentNode->m_right = newNode;
 				m_size++;
@@ -336,12 +342,14 @@ bool IdMap::removeId(int id) {
 			if (currentNode->m_idRange.first < id) {
 				leftHalf = new IdNode;
 				leftHalf->m_idRange = std::pair<int, int>(currentNode->m_idRange.first, id - 1);
+				leftHalf->owner = this;
 				m_size++;
 			}
 			// If there is a right half leftover, create it
 			if (currentNode->m_idRange.second > id) {
 				rightHalf = new IdNode;
 				rightHalf->m_idRange = std::pair<int, int>(id + 1, currentNode->m_idRange.second);
+				rightHalf->owner = this;
 				m_size++;
 			}
 
@@ -446,15 +454,15 @@ bool IdMap::removeId(int id) {
 	// Return fail
 	return false;
 }
-void IdMap::removeNode(IdNode* nodeToRemove) {
-	if (nodeToRemove == nullptr || m_size == 0)
-		return;
+bool IdMap::removeNode(IdNode* nodeToRemove) {
+	if (nodeToRemove == nullptr || nodeToRemove->owner != this || m_size == 0)
+		return false;
 
 	if (m_size == 1) {
 		delete(nodeToRemove);
 		m_rootNode = nullptr;
 		m_size = 0;
-		return;
+		return true;
 	}
 
 	IdNode* leftNode = nodeToRemove->m_left;
@@ -530,6 +538,43 @@ void IdMap::removeNode(IdNode* nodeToRemove) {
 		delete(nodeToRemove);
 		m_size--;
 	}
+
+	// Return success
+	return true;
+}
+int IdMap::extractLeast() {
+	if (m_size == 0)
+		return -1;
+
+	IdNode* nodeToEdit = m_rootNode->getLeftmostNode();
+	if (nodeToEdit == nullptr)
+		nodeToEdit = m_rootNode;
+
+	int idToReturn = nodeToEdit->m_idRange.first;
+	
+	if (nodeToEdit->m_idRange.second - nodeToEdit->m_idRange.first == 0)
+		removeNode(nodeToEdit);
+	else
+		nodeToEdit->m_idRange.first++;
+
+	return idToReturn;
+}
+int IdMap::extractGreatest() {
+	if (m_size == 0)
+		return -1;
+
+	IdNode* nodeToEdit = m_rootNode->getRightmostNode();
+	if (nodeToEdit == nullptr)
+		nodeToEdit = m_rootNode;
+
+	int idToReturn = nodeToEdit->m_idRange.second;
+
+	if (nodeToEdit->m_idRange.second = nodeToEdit->m_idRange.first == 0)
+		removeNode(nodeToEdit);
+	else
+		nodeToEdit->m_idRange.second--;
+
+	return true;
 }
 void IdMap::clear() {
 	if (m_size == 0)
