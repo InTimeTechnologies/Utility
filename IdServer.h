@@ -1,19 +1,16 @@
 #pragma once
 
-// Dependencies | utility
-#include "IdMap.h"
+// Dependencies | std
+#include <list>
+#include <utility>
 
 class IdServer {
-	// Static
-	public:
-		// Properties
-		static int defaultIdCount;
-
 	// Object
 	private:
 		// Properties
-		IdMap idMap = IdMap();
-		int idCount = 0;
+		std::list<std::pair<int, int>> idRangeList = std::list<std::pair<int, int>>();
+		int registeredIdsCount = 1;
+		int idsAvailableCount = 1;
 
 	public:
 		// Constructor / Destructor
@@ -22,13 +19,12 @@ class IdServer {
 		~IdServer();
 
 		// Getters
-		int getIdCount() const;
+		std::list<std::pair<int, int>> getIdRangeList() const;
+		int getRegisteredIdsCount() const;
+		int getIdsAvailableCount() const;
 
 		// Functions
+		bool increaseIdLimit(int idAmount);
 		int requestId();
 		bool submitId(int id);
-
-	private:
-		// Functions
-		void increaseSize(int size);
 };
