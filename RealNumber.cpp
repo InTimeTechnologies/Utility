@@ -96,7 +96,7 @@ RealNumber RealNumber::operator-(const RealNumber& other) const {
 }
 RealNumber RealNumber::operator*(const RealNumber& other) const {
 	if (other.value == 0LL)
-		return RealNumber();
+		return RealNumber(0LL);
 
 	long long thisWholePart = value / 100000000LL;
 	long long thisDecimalPart = value % 100000000LL;
@@ -115,19 +115,8 @@ RealNumber RealNumber::operator*(const RealNumber& other) const {
 }
 RealNumber RealNumber::operator/(const RealNumber& other) const {
 	if (other.value == 0LL)
-		return RealNumber();
-
-	// Find the common scale for both numbers
-	long long common_scale = 100000000LL;
-
-	// Convert both numbers to the common scale
-	long long this_scaled = value * (100000000LL / common_scale);
-	long long other_scaled = other.value * (100000000LL / common_scale);
-
-	// Perform the division
-	long long result_scaled = (this_scaled * common_scale) / other_scaled;
-
-	return RealNumber(result_scaled);
+		return RealNumber(0LL);
+	return RealNumber((value * 100000000) / other.value);
 }
 RealNumber& RealNumber::operator+=(const RealNumber& other) {
 	value += other.value;
