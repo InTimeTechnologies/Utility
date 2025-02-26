@@ -1,16 +1,14 @@
-#include "IdServer.h"
+#include "IDFactory.h"
 
-// class IdServer
+// class IDFactory
 
 // Object | public
 
 // Consturctor / Destructor
-IdServer::IdServer() {
+IDFactory::IDFactory() {
 	idRangeList.push_back(std::pair<int, int>(0, 0));
-	registeredIdsCount = 1;
-	idsAvailableCount = 1;
 }
-IdServer::IdServer(int idCount) {
+IDFactory::IDFactory(int idCount) {
 	if (idCount <= 0)
 		idCount = 1;
 
@@ -18,24 +16,24 @@ IdServer::IdServer(int idCount) {
 	registeredIdsCount = idCount;
 	idsAvailableCount = idCount;
 }
-IdServer::~IdServer() {
+IDFactory::~IDFactory() {
 
 }
 
 // Getters
-std::list<std::pair<int, int>> IdServer::getIdRangeList() const {
+std::list<std::pair<int, int>> IDFactory::getIdRangeList() const {
 	return idRangeList;
 }
-int IdServer::getRegisteredIdsCount() const {
+int IDFactory::getRegisteredIdsCount() const {
 	return registeredIdsCount;
 }
-int IdServer::getIdsAvailableCount() const {
+int IDFactory::getIdsAvailableCount() const {
 	return idsAvailableCount;
 }
 
 
 // Functions
-bool IdServer::increaseIdLimit(int idAmount) {
+bool IDFactory::increaseIDLimit(int idAmount) {
 	// Error check
 	if (idAmount <= 0)
 		return false;
@@ -56,7 +54,7 @@ bool IdServer::increaseIdLimit(int idAmount) {
 			// Add new range as a new ndoe
 			idRangeList.push_back(newIdRange);
 	}
-	
+
 	// Increase size of availabled ids and registered ids
 	registeredIdsCount += idAmount;
 	idsAvailableCount += idAmount;
@@ -64,10 +62,10 @@ bool IdServer::increaseIdLimit(int idAmount) {
 
 	return true;
 }
-int IdServer::requestId() {
+int IDFactory::extractID() {
 	// If idRangeList is empty, double the limit of ids it can hold
 	if (idRangeList.size() == 0)
-		increaseIdLimit(registeredIdsCount);
+		increaseIDLimit(registeredIdsCount);
 
 	// Get the least id from the leftmost node
 	std::list<std::pair<int, int>>::iterator leastNode = idRangeList.begin();
@@ -85,7 +83,63 @@ int IdServer::requestId() {
 	// Return the least id
 	return leastId;
 }
-bool IdServer::submitId(int id) {
+bool IDFactory::isAvailable(int id) const {
+	for (const std::pair<int, int>& idRange : idRangeList)
+		if (idRange.first <= id && id <= idRange.second)
+			return true;
+	return false;
+}
+bool IDFactory::extractID(int id) {
+	if (idRangeList.size() == 0)
+		increaseIDLimit(registeredIdsCount * 2);
+
+	for (std::list<std::pair<int, int>>::iterator node = idRangeList.begin(); node != idRangeList.end(); ++node) {
+		// Is id in left edge
+		if (id == node->first) {
+			// Remove id
+			node->first++;
+
+			// Is there more ids available in this range
+			if (node->first > node->second)
+				idRangeList.erase(node);
+
+			return true; // Success
+		}
+
+		// Is id in right edge
+		if (id == node->second) {
+			// Remove id
+			node->second--;
+
+			// Is there more ids available in this range
+			if (node->first < node->second)
+				idRangeList.erase(node);
+
+			return true; // Success
+		}
+
+		// Is id in the center
+		if (node->first < id && id < node->second) {
+			// Create new left and right ranges
+			std::pair<int, int> leftRange = std::pair<int, int>(node->first, id - 1);
+			std::pair<int, int> rightRange = std::pair<int, int>(id + 1, node->second);
+
+			// Insert new range to the left of this node
+			idRangeList.insert(node, leftRange);
+
+			// Insert new range to the right of this node
+			idRangeList.insert(std::next(node), rightRange);
+
+			// Remove this node because it is no longer valid
+			idRangeList.erase(node);
+
+			return true; // Success
+		}
+	}
+
+	return false; // Fail
+}
+bool IDFactory::insert(int id) {
 	// Error check
 	if (id < 0 || id >= registeredIdsCount)
 		return false;
@@ -104,7 +158,7 @@ bool IdServer::submitId(int id) {
 	while (currentNode != idRangeList.end()) {
 		// Current id range at hand
 		std::pair<int, int> currentIdRange = *currentNode;
-		
+
 		// Error check
 		if (id >= currentIdRange.first && id <= currentIdRange.second)
 			return false;
@@ -132,7 +186,7 @@ bool IdServer::submitId(int id) {
 					if (currentNode != idRangeList.begin()) {
 						leftNode = std::prev(currentNode);
 						leftIdRange = *leftNode;
-						
+
 						// Check if this node can merge with the left node now that it's bigger in range
 						if (newIdRange.first - 1 == leftIdRange.second) {
 							// Extend current node to the left and remove the node to its left
@@ -170,7 +224,7 @@ bool IdServer::submitId(int id) {
 					if (currentNode != std::prev(idRangeList.end())) {
 						rightNode = std::next(currentNode);
 						rightIdRange = *rightNode;
-						
+
 						// Check if this node can merge with the right node now that it's bigger in range
 						if (newIdRange.second + 1 == rightIdRange.first) {
 							// Extend current node to the right and remove the node to its right
