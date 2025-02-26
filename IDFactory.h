@@ -4,7 +4,7 @@
 #include <list>
 #include <utility>
 
-class IdServer {
+class IDFactory {
 	// Object
 	private:
 		// Properties
@@ -14,9 +14,9 @@ class IdServer {
 
 	public:
 		// Constructor / Destructor
-		IdServer();
-		IdServer(int idCount);
-		~IdServer();
+		IDFactory();
+		IDFactory(int idCount);
+		~IDFactory();
 
 		// Getters
 		std::list<std::pair<int, int>> getIdRangeList() const;
@@ -24,7 +24,9 @@ class IdServer {
 		int getIdsAvailableCount() const;
 
 		// Functions
-		bool increaseIdLimit(int idAmount);
-		int requestId();
-		bool submitId(int id);
+		bool increaseIDLimit(int idAmount);
+		int extractID();
+		bool isAvailable(int id) const;
+		bool extractID(int id);
+		bool insert(int id);
 };
